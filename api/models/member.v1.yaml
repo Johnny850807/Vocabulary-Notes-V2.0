@@ -1,0 +1,30 @@
+title: Member
+type: object
+description: ''
+properties:
+  id:
+    type: integer
+  firstName:
+    type: string
+  lastName:
+    type: string
+  age:
+    type: integer
+  email:
+    type: string
+  password:
+    type: string
+  exp:
+    type: integer
+  level:
+    type: string
+  type:
+    type: integer
+required:
+  - id
+  - firstName
+  - lastName
+  - age
+  - email
+  - password
+  - type

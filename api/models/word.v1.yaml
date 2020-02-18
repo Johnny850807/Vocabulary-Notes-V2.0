@@ -1,0 +1,17 @@
+title: word
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  synonyms:
+    type: array
+    items:
+      type: string
+  imageUrl:
+    type: string
+required:
+  - id
+  - name
+  - imageUrl

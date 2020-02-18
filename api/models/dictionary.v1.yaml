@@ -1,0 +1,16 @@
+title: dictionary
+type: object
+properties:
+  id:
+    type: integer
+  title:
+    type: string
+    example: Toeic Level 1
+    minLength: 1
+    maxLength: 80
+  description:
+    type: string
+required:
+  - id
+  - title
+  - description
