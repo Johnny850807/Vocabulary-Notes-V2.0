@@ -1,25 +1,21 @@
 package tw.waterball.vocabnotes.entities;
 
 import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter()
-@Setter
-@Accessors(fluent = true)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter @Setter
 @ToString
 @EqualsAndHashCode
 
+@Entity
 @Table(name = "wordgroup")
 public class WordGroup {
 
@@ -30,7 +26,11 @@ public class WordGroup {
     @Length(min = 1, max = 50)
     private String title;
 
-    @ManyToMany
+    @Singular
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "wordgroup_word",
+            joinColumns = @JoinColumn(name = "wordgroup_id"),
+            inverseJoinColumns = @JoinColumn(name = "word_id"))
     private Set<Word> words = new HashSet<>();
 
 }

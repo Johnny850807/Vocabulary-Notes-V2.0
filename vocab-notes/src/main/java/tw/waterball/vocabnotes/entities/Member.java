@@ -1,25 +1,19 @@
 package tw.waterball.vocabnotes.entities;
 
 import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 @Getter() @Setter
-@Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode
 
+@Entity
 @Table(name = "member")
 public class Member {
     @Id
@@ -45,16 +39,31 @@ public class Member {
     @NotNull
     private String password;
 
-    private int exp;
+    private int exp = 0;
 
-    private int level;
+    private int level = 1;
 
     private Type type;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "owner")
     private List<Dictionary> ownDictionaries = new ArrayList<>();
 
     public enum Type {
         MEMBER, ADMIN
+    }
+
+    public Member(int id, String firstName,
+                  String lastName,
+                  int age, String email,
+                  String password, Type type) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.type = type;
     }
 }

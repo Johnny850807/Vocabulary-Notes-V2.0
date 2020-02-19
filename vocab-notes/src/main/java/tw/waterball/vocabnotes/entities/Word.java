@@ -1,23 +1,22 @@
 package tw.waterball.vocabnotes.entities;
 
 import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Getter()
-@Setter
-@Accessors(fluent = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 @ToString
 @EqualsAndHashCode
 
+@Entity
 @Table(name = "word")
 public class Word {
     @Id

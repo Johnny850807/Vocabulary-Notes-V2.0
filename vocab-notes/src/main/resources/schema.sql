@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS wordgroup_word;
+DROP TABLE IF EXISTS dictionary_wordgroup;
+DROP TABLE IF EXISTS word, wordgroup, dictionary;
+DROP TABLE IF EXISTS member;
+
 CREATE TABLE member
 (
   id         INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -6,8 +11,8 @@ CREATE TABLE member
   age        TINYINT      NOT NULL,
   email      VARCHAR(50)  NOT NULL,
   password   VARCHAR(128) NOT NULL,
-  exp        INTEGER                  DEFAULT 0,
-  level      INTEGER                  DEFAULT 1,
+  exp        INTEGER                 DEFAULT 0,
+  level      INTEGER                 DEFAULT 1,
   type       ENUM ('member', 'admin') DEFAULT 'member'
 );
 

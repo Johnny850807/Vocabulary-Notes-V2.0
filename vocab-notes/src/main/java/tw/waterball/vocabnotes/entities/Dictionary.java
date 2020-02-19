@@ -2,18 +2,21 @@ package tw.waterball.vocabnotes.entities;
 
 import com.sun.istack.NotNull;
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
-@Getter() @Setter
-@Accessors(fluent = true)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter @Setter
 @ToString
 @EqualsAndHashCode
 
+@Entity
 @Table(name = "dictionary")
 public class Dictionary {
     @Id
@@ -29,18 +32,25 @@ public class Dictionary {
     private String description;
 
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "owner_id")
     private Member owner;
 
     private Type type;
 
-    @ManyToMany
+    @Singular
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "dictionary_wordgroup",
+        joinColumns = @JoinColumn(name = "dictionary_id"),
+        inverseJoinColumns = @JoinColumn(name = "wordgroup_id"))
     private Set<WordGroup> wordGroups = new HashSet<>();
 
 
     public enum Type {
         PUBLIC, OWN
     }
+
 
 }
