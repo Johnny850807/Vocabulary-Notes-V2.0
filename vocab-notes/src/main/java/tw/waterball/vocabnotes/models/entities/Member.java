@@ -1,4 +1,4 @@
-package tw.waterball.vocabnotes.entities;
+package tw.waterball.vocabnotes.models.entities;
 
 import com.sun.istack.NotNull;
 import lombok.*;
@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "member")
 public class Member {
     @Id
-    private int id;
+    private Integer id;
 
     @NotNull
     @Length(min = 1, max = 50)

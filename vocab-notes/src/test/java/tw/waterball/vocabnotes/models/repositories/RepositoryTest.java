@@ -1,13 +1,13 @@
-package tw.waterball.vocabnotes.repositories;
+package tw.waterball.vocabnotes.models.repositories;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import tw.waterball.vocabnotes.entities.Dictionary;
-import tw.waterball.vocabnotes.entities.Member;
-import tw.waterball.vocabnotes.entities.Word;
-import tw.waterball.vocabnotes.entities.WordGroup;
+import tw.waterball.vocabnotes.models.entities.Dictionary;
+import tw.waterball.vocabnotes.models.entities.Member;
+import tw.waterball.vocabnotes.models.entities.Word;
+import tw.waterball.vocabnotes.models.entities.WordGroup;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -23,6 +23,9 @@ class RepositoryTest {
 
     @Autowired
     DictionaryRepository dictionaryRepository;
+
+    @Autowired
+    WordGroupRepository wordGroupRepository;
 
     @Test
     public void testMemberRepository() {
@@ -51,6 +54,10 @@ class RepositoryTest {
                         .word(new Word(3, "stipulation", "", "http://www.hicounsel.com/wp-content/uploads/2017/07/maxresdefault.jpg"))
                         .build())
                 .build();
+
+        for (WordGroup wordGroup : toeic.getWordGroups()) {
+            System.out.println(wordGroup);
+        }
 
         assertEquals(expect, toeic);
         assertEquals(expect.getOwner(), toeic.getOwner());

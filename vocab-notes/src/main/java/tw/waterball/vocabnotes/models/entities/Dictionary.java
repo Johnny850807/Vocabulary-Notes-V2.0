@@ -1,4 +1,4 @@
-package tw.waterball.vocabnotes.entities;
+package tw.waterball.vocabnotes.models.entities;
 
 import com.sun.istack.NotNull;
 import lombok.*;
@@ -20,7 +20,7 @@ import java.util.Set;
 @Table(name = "dictionary")
 public class Dictionary {
     @Id
-    private int id;
+    private Integer id;
 
 
     @NotNull
@@ -41,7 +41,7 @@ public class Dictionary {
     private Type type;
 
     @Singular
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "dictionary_wordgroup",
         joinColumns = @JoinColumn(name = "dictionary_id"),
         inverseJoinColumns = @JoinColumn(name = "wordgroup_id"))

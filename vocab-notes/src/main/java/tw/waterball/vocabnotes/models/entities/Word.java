@@ -1,8 +1,7 @@
-package tw.waterball.vocabnotes.entities;
+package tw.waterball.vocabnotes.models.entities;
 
 import com.sun.istack.NotNull;
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
@@ -20,7 +19,7 @@ import javax.persistence.Table;
 @Table(name = "word")
 public class Word {
     @Id
-    private int id;
+    private Integer id;
 
     @NotNull
     @Length(min = 1, max = 30)
