@@ -49,5 +49,9 @@ public class Dictionary {
         PUBLIC, OWN
     }
 
+    public void setOwner(Member owner) {
+        this.owner = owner;
+        owner.getOwnDictionaries().add(this);
+    }
 
 }

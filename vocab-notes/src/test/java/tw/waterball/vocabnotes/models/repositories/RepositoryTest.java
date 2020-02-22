@@ -8,6 +8,7 @@ import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
+import tw.waterball.vocabnotes.utils.RandomEntityGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -41,7 +42,8 @@ class RepositoryTest extends BaseSpringTest {
     public void testDictionaryRepository() {
         Dictionary toeic = dictionaryRepository.findById(1).get();
 
-        Dictionary expect = testDictionary();
+        Dictionary expect = RandomEntityGenerator.randomDictionary(Dictionary.Type.OWN,
+                3, 5, 2, 7);
         assertEntityEquals(expect, toeic);
 
         // change its id then add again

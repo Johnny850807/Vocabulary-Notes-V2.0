@@ -58,4 +58,19 @@ public class Member {
     }
 
 
+    public void setExp(int exp) {
+        this.exp = exp;
+        this.level = Level.getLevelFromExp(exp).getNumber();
+    }
+
+    public void addDictionary(Dictionary dictionary) {
+        ownDictionaries.add(dictionary);
+        dictionary.setOwner(this);
+    }
+
+    public void removeDictionary(Dictionary dictionary) {
+        ownDictionaries.remove(dictionary);
+        dictionary.setOwner(null);
+    }
+
 }
