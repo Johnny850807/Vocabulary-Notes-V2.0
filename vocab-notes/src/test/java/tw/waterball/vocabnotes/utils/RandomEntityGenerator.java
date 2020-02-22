@@ -5,8 +5,6 @@ import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static tw.waterball.vocabnotes.utils.RandomGenerator.randomHttpUrl;
 import static tw.waterball.vocabnotes.utils.RandomGenerator.randomString;
@@ -31,7 +29,7 @@ public class RandomEntityGenerator {
 
     public static WordGroup randomWordGroup(int minWordCount, int maxWordCount) {
         WordGroup wordGroup = new WordGroup();
-        wordGroup.setTitle(randomString(0, 15, false));
+        wordGroup.setTitle(RANDOM.nextBoolean() ? null : randomString(4, 15, false));
         int wordCount = RANDOM.nextInt(maxWordCount-minWordCount+1)+minWordCount;
         Set<Word> words = new HashSet<>();
         for (int i = 0; i < wordCount; i++) {
@@ -53,5 +51,13 @@ public class RandomEntityGenerator {
         word.setSynonyms(synonyms);
         word.setImageUrl(randomHttpUrl(false));
         return word;
+    }
+
+    public static void main(String[] args) {
+        Dictionary dictionary = randomDictionary(Dictionary.Type.PUBLIC,
+                1, 15,
+                2, 10);
+
+        System.out.println(dictionary);
     }
 }

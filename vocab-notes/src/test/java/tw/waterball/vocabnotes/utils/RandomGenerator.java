@@ -46,7 +46,7 @@ public class RandomGenerator {
     }
 
     public static String randomString(int minLen, int maxLen, boolean putSpace) {
-        if (minLen == 0) {
+        if (minLen == 0 && maxLen <= 0) {
             return "";
         }
 

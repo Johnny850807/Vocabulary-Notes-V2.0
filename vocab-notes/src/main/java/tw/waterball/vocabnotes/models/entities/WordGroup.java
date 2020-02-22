@@ -40,7 +40,7 @@ public class WordGroup {
      * is named "apple / orange / lemon" at default.
      */
     public String getTitle() {
-        if (title == null) {
+        if (title == null || title.isEmpty()) {
             return words.stream().map(Word::getName)
                     .collect(Collectors.joining(" / "));
         }
