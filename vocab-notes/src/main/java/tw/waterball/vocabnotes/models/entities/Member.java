@@ -12,7 +12,6 @@ import java.util.List;
 @ToString
 
 @Entity
-@Table(name = "member")
 public class Member {
     private Integer id;
 

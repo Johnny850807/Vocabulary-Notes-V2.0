@@ -37,7 +37,6 @@ public class Dictionary {
     @Singular
     private Set<WordGroup> wordGroups = new HashSet<>();
 
-
     public enum Type {
         PUBLIC, OWN
     }

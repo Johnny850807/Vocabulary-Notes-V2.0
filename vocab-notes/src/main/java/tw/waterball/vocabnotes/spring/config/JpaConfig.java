@@ -54,6 +54,4 @@ public class JpaConfig {
         txManager.setEntityManagerFactory(entityManagerFactory);
         return txManager;
     }
-
-
 }

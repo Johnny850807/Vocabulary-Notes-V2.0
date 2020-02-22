@@ -14,7 +14,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter @Setter
 @ToString
-@EqualsAndHashCode
 
 @Entity
 public class WordGroup {
