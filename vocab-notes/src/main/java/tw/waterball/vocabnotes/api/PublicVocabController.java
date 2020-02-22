@@ -24,8 +24,8 @@ public class PublicVocabController {
     }
 
     @GetMapping("/dictionaries/{id}")
-    public ResponseEntity<Dictionary> getDictionary(@PathVariable int id) {
-        return ResponseEntity.ok(publicVocabService.getDictionary(id));
+    public Dictionary getDictionary(@PathVariable int id) {
+        return publicVocabService.getDictionary(id);
     }
 
     @PatchMapping("/dictionaries/{id}")

@@ -7,6 +7,7 @@ import tw.waterball.vocabnotes.utils.RegexUtils;
 import javax.persistence.Entity;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +26,14 @@ public class Word {
     private String synonyms = "";
 
     @NotNull
-    @Pattern(regexp = RegexUtils.URL_PATTERN)
+    // TODO validate URL via Apache's UrlValidator
     private String imageUrl;
+
+    public void setSynonyms(List<String> synonyms) {
+        this.synonyms = String.join(", ", synonyms);
+    }
+
+    public void setSynonyms(String synonyms) {
+        this.synonyms = synonyms;
+    }
 }

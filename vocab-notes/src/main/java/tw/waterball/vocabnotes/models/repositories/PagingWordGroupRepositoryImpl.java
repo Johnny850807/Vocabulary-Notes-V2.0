@@ -1,12 +1,13 @@
 package tw.waterball.vocabnotes.models.repositories;
 
+import org.springframework.stereotype.Repository;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-public class PagingWordGroupRepositroyImpl implements PagingWordGroupRepository {
+public class PagingWordGroupRepositoryImpl implements PagingWordGroupRepository {
     @PersistenceContext
     private EntityManager em;
 
