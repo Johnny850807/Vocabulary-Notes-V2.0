@@ -34,7 +34,7 @@
             </many-to-one>
 
             <many-to-many name="wordGroups">
-                <join-table>
+                <join-table name="dictionary_wordgroup">
                     <join-column name="dictionary_id"/>
                     <inverse-join-column name="wordgroup_id"/>
                 </join-table>
@@ -49,7 +49,7 @@
                 <generated-value strategy="IDENTITY"/>
             </id>
             <many-to-many name="words" fetch="EAGER">
-                <join-table>
+                <join-table name="wordgroup_word">
                     <join-column name="wordgroup_id"/>
                     <inverse-join-column name="word_id"/>
                 </join-table>

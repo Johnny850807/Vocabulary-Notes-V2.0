@@ -1,31 +1,21 @@
 package tw.waterball.vocabnotes.models.repositories;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
+import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
-import tw.waterball.vocabnotes.utils.EntityEquality;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 
-@DataJpaTest
-@ExtendWith(SpringExtension.class)
 @Sql(scripts = {"classpath:clear.sql", "classpath:data.sql"}, executionPhase = BEFORE_TEST_METHOD)
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-class RepositoryTest {
+class RepositoryTest extends BaseSpringTest {
 
     @Autowired
     MemberRepository memberRepository;
@@ -44,36 +34,35 @@ class RepositoryTest {
         Member created = new Member(2, "A", "B", 15, "test@email.com", "Pass", Member.Role.MEMBER);
         created = memberRepository.save(created);
         Member found = memberRepository.findById(created.getId()).get();
-        assertTrue(EntityEquality.equals(created, found));
+        assertEntityEquals(created, found);
     }
 
     @Test
     public void testDictionaryRepository() {
         Dictionary toeic = dictionaryRepository.findById(1).get();
 
-        Dictionary expect = Dictionary.builder().id(1)
+        Dictionary expect = testDictionary();
+        assertEntityEquals(expect, toeic);
+
+        // change its id then add again
+        expect.setId(2);
+        dictionaryRepository.save(expect);
+        Dictionary found = dictionaryRepository.findById(2).get();
+        assertEntityEquals(expect, found);
+    }
+
+    private Dictionary testDictionary() {
+        return Dictionary.builder().id(1)
                 .title("TOEIC Level 1")
                 .description("The Toeic basic dictionary.")
                 .type(Dictionary.Type.OWN)
                 .owner(new Member(1, "Johnny", "Pan", 23,
                         "johnny850807@gmail.com", "hashed", Member.Role.MEMBER))
                 .wordGroup(WordGroup.builder().id(1)
-                        .word(new Word(1, "lease", "","https://www.lawdonut.co.uk/sites/default/files/your-options-for-getting-out-of-a-lease-552568144.jpg"))
+                        .word(new Word(1, "lease", "", "https://www.lawdonut.co.uk/sites/default/files/your-options-for-getting-out-of-a-lease-552568144.jpg"))
                         .word(new Word(2, "treaty", "", "https://static01.nyt.com/images/2018/12/15/opinion/15ArmsControl-edt/15ArmsControl-edt-articleLarge.jpg"))
                         .word(new Word(3, "stipulation", "", "http://www.hicounsel.com/wp-content/uploads/2017/07/maxresdefault.jpg"))
                         .build())
                 .build();
-
-        for (WordGroup wordGroup : toeic.getWordGroups()) {
-            System.out.println(wordGroup);
-        }
-
-        assertEquals(expect, toeic);
-        assertEquals(expect.getOwner(), toeic.getOwner());
-
-        // change its id then add again
-        expect.setId(2);
-        dictionaryRepository.save(expect);
-        assertEquals(expect, dictionaryRepository.findById(2).get());
     }
 }

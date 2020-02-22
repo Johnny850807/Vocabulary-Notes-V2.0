@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 
 @Repository
-public interface DictionaryRepository extends JpaRepository<Dictionary, Integer> {
+public interface DictionaryRepository extends JpaRepository<Dictionary, Integer>, PagingWordGroupRepository {
 
 }

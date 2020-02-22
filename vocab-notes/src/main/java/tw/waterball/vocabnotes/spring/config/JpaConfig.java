@@ -24,13 +24,6 @@ import javax.sql.DataSource;
 public class JpaConfig {
 
     @Bean
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
-    }
-
-    @Bean
     public JpaVendorAdapter jpaVendorAdapter(Environment env) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);

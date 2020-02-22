@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class EntityEquality {
 
-    private static boolean equals(Object o1, Object o2) {
+    public static boolean equals(Object o1, Object o2) {
         if (o1 != null && o2 != null) {
             if (o1.getClass() != o2.getClass()) {
                 return false;
@@ -37,7 +37,7 @@ public class EntityEquality {
             } else if (o1 instanceof Word) {
                 return equals((Word) o1, (Word) o2);
             } else {
-                throw new IllegalArgumentException("The entity type " + o1.getClass().getSimpleName() + " is not supported.");
+                throw new IllegalArgumentException("The type " + o1.getClass().getSimpleName() + " is not an entity.");
             }
         } else return o1 == null && o2 == null;
     }
@@ -65,7 +65,8 @@ public class EntityEquality {
 
     public static boolean equals(WordGroup wg1, WordGroup wg2) {
         return Objects.equals(wg1.getId(), wg2.getId()) &&
-                Objects.equals(wg1.getTitle(), wg2.getTitle()) &&
+                wg1.hasTitle() == wg2.hasTitle() &&
+                !wg1.hasTitle() || Objects.equals(wg1.getTitle(), wg2.getTitle()) &&
                 equals(wg1.getWords(), wg2.getWords());
     }
 
@@ -81,8 +82,6 @@ public class EntityEquality {
     private static boolean equals(Collection c1, Collection c2) {
         if (c1 == c2)
             return true;
-        if (c1.getClass() != c2.getClass())
-            return false;
         if (c1.size() != c2.size())
             return false;
         try {

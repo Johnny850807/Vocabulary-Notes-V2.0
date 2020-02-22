@@ -37,8 +37,17 @@ public class Dictionary {
     @Singular
     private Set<WordGroup> wordGroups = new HashSet<>();
 
+    public void addWordGroup(WordGroup wordGroup) {
+        wordGroups.add(wordGroup);
+    }
+
+    public void removeWordGroup(WordGroup wordGroup) {
+        wordGroups.remove(wordGroup);
+    }
+
     public enum Type {
         PUBLIC, OWN
     }
+
 
 }

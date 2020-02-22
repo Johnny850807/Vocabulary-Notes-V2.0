@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
@@ -19,11 +20,34 @@ import java.util.Set;
 public class WordGroup {
     private Integer id;
 
-    @NotNull
     @Size(min = 1, max = 50)
     private String title;
 
     @Singular
     private Set<Word> words = new HashSet<>();
 
+    public void addWord(Word word) {
+        words.add(word);
+    }
+
+    public void removeWord(Word word) {
+        words.remove(word);
+    }
+
+    /**
+     * If the title is not set, defaulted at all contained words separated by '/'.
+     * For example a word group of {'apple', 'orange', 'lemon'}
+     * is named "apple / orange / lemon" at default.
+     */
+    public String getTitle() {
+        if (title == null) {
+            return words.stream().map(Word::getName)
+                    .collect(Collectors.joining(" / "));
+        }
+        return title;
+    }
+
+    public boolean hasTitle() {
+        return title != null;
+    }
 }

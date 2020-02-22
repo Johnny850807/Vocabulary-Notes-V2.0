@@ -5,5 +5,5 @@ import tw.waterball.vocabnotes.models.entities.WordGroup;
 import java.util.List;
 
 public interface PagingWordGroupRepository {
-
+    List<WordGroup> findWordGroupsFromDictionary(int dictionaryId, int limit, int offset);
 }

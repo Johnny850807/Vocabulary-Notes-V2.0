@@ -6,8 +6,8 @@ DROP TABLE IF EXISTS member;
 CREATE TABLE member
 (
   id         INTEGER PRIMARY KEY AUTO_INCREMENT,
-  first_name NVARCHAR(50) NOT NULL,
-  last_name  NVARCHAR(50) NOT NULL,
+  first_name NVARCHAR(18) NOT NULL,
+  last_name  NVARCHAR(18) NOT NULL,
   age        TINYINT      NOT NULL,
   email      VARCHAR(50)  NOT NULL UNIQUE,
   password   VARCHAR(128) NOT NULL,

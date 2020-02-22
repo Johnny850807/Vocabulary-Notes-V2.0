@@ -15,10 +15,10 @@ import java.util.List;
 public class Member {
     private Integer id;
 
-    @Size(min = 1, max=50)
+    @Size(min = 1, max=18)
     private String firstName;
 
-    @Size(min = 1, max=50)
+    @Size(min = 1, max=18)
     private String lastName;
 
     @Min(1) @Max(150)

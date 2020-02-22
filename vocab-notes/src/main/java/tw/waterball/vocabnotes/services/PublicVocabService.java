@@ -5,6 +5,7 @@ import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface PublicVocabService {
@@ -15,7 +16,7 @@ public interface PublicVocabService {
 
 
     Dictionary createDictionary(Dictionary dictionary);
-    void patchDictionary(int dictionaryId, String title, String description);
+    void patchDictionary(int dictionaryId, Optional<String> title, Optional<String> description);
     void deleteDictionary(int dictionaryId);
 
     WordGroup createWordGroup(WordGroup wordGroup);
@@ -31,5 +32,6 @@ public interface PublicVocabService {
     void addWordGroupIntoDictionary(int wordGroupId, int dictionaryId);
     void removeWordFromWordGroup(String wordName, int wordGroupId);
     void removeWordGroupFromDictionary(int wordGroupId, int dictionaryId);
+    List<WordGroup> getWordGroups(int dictionaryId, Integer offset, Integer limit);
 
 }
