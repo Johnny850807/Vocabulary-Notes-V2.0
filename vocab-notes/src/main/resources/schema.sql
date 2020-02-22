@@ -9,11 +9,11 @@ CREATE TABLE member
   first_name NVARCHAR(50) NOT NULL,
   last_name  NVARCHAR(50) NOT NULL,
   age        TINYINT      NOT NULL,
-  email      VARCHAR(50)  NOT NULL,
+  email      VARCHAR(50)  NOT NULL UNIQUE,
   password   VARCHAR(128) NOT NULL,
-  exp        INTEGER                 DEFAULT 0,
-  level      INTEGER                 DEFAULT 1,
-  type       ENUM ('member', 'admin') DEFAULT 'member'
+  exp        INTEGER                  DEFAULT 0,
+  level      INTEGER                  DEFAULT 1,
+  role       ENUM ('member', 'admin') DEFAULT 'member'
 );
 
 CREATE TABLE dictionary
@@ -25,19 +25,19 @@ CREATE TABLE dictionary
   owner_id    INTEGER,
   FOREIGN KEY (owner_id) REFERENCES member (id) ON DELETE CASCADE,
   CHECK (type = 'public' AND owner_id IS NULL
-           OR type = 'own' AND owner_id IS NOT NULL)
+    OR type = 'own' AND owner_id IS NOT NULL)
 );
 
 CREATE TABLE wordgroup
 (
   id    INTEGER PRIMARY KEY AUTO_INCREMENT,
-  title NVARCHAR(50)
+  title NVARCHAR(50) UNIQUE
 );
 
 CREATE TABLE word
 (
   id        INTEGER PRIMARY KEY AUTO_INCREMENT,
-  name      VARCHAR(30),
+  name      VARCHAR(30) UNIQUE,
   synonyms  VARCHAR(80) DEFAULT '' COMMENT 'a list of synonym separated by comma',
   image_url VARCHAR(1000)
 );

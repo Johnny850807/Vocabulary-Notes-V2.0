@@ -32,11 +32,10 @@ class RepositoryTest {
         Member member = memberRepository.findById(1).get();
         assertEquals("Johnny", member.getFirstName());
 
-        Member created = new Member(2, "A", "B", 15, "Email", "Pass", Member.Type.MEMBER);
+        Member created = new Member(2, "A", "B", 15, "Email", "Pass", Member.Role.MEMBER);
         created = memberRepository.save(created);
         assertEquals(created, memberRepository.findById(2).get());
     }
-
 
     @Test
     public void testDictionaryRepository() {
@@ -47,7 +46,7 @@ class RepositoryTest {
                 .description("The Toeic basic dictionary.")
                 .type(Dictionary.Type.OWN)
                 .owner(new Member(1, "Johnny", "Pan", 23,
-                        "johnny850807@gmail.com", "hashed", Member.Type.MEMBER))
+                        "johnny850807@gmail.com", "hashed", Member.Role.MEMBER))
                 .wordGroup(WordGroup.builder().id(1)
                         .word(new Word(1, "lease", "","https://www.lawdonut.co.uk/sites/default/files/your-options-for-getting-out-of-a-lease-552568144.jpg"))
                         .word(new Word(2, "treaty", "", "https://static01.nyt.com/images/2018/12/15/opinion/15ArmsControl-edt/15ArmsControl-edt-articleLarge.jpg"))

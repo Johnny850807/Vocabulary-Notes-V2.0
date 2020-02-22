@@ -2,34 +2,29 @@ package tw.waterball.vocabnotes.models.entities;
 
 import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
+import tw.waterball.vocabnotes.utils.RegexUtils;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 @ToString
-@EqualsAndHashCode
 
 @Entity
-@Table(name = "word")
 public class Word {
-    @Id
     private Integer id;
 
     @NotNull
-    @Length(min = 1, max = 30)
+    @Size(min = 1, max = 30)
     private String name;
 
-    @Length(max = 80)
-    private String synonyms;
+    @Size(max = 80)
+    private String synonyms = "";
 
     @NotNull
-    @Length(min = 1, max = 1000)
-    @Column(name = "image_url")
+    @Pattern(regexp = RegexUtils.URL_PATTERN)
     private String imageUrl;
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,21 +17,14 @@ import java.util.Set;
 @EqualsAndHashCode
 
 @Entity
-@Table(name = "wordgroup")
 public class WordGroup {
-
-    @Id
     private Integer id;
 
     @NotNull
-    @Length(min = 1, max = 50)
+    @Size(min = 1, max = 50)
     private String title;
 
     @Singular
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "wordgroup_word",
-            joinColumns = @JoinColumn(name = "wordgroup_id"),
-            inverseJoinColumns = @JoinColumn(name = "word_id"))
     private Set<Word> words = new HashSet<>();
 
 }

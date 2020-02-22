@@ -1,69 +1,62 @@
 package tw.waterball.vocabnotes.models.entities;
 
-import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Getter() @Setter
+@Getter @Setter
 @ToString
-@EqualsAndHashCode
 
 @Entity
 @Table(name = "member")
 public class Member {
-    @Id
     private Integer id;
 
-    @NotNull
-    @Length(min = 1, max = 50)
-    @Column(name = "first_name")
+    @Size(min = 1, max=50)
     private String firstName;
 
-    @NotNull
-    @Length(min = 1, max = 50)
-    @Column(name = "last_name")
+    @Size(min = 1, max=50)
     private String lastName;
 
-    @NotNull
+    @Min(1) @Max(150)
     private int age;
 
-    @NotNull
-    @Length(min = 1, max = 50)
+    @Email
+    @Size(min = 1, max=50)
     private String email;
 
-    @NotNull
+    @NotNull @NotBlank
     private String password;
 
     private int exp = 0;
-
     private int level = 1;
 
-    private Type type;
+    @NotNull
+    private Role role;
 
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "owner")
     private List<Dictionary> ownDictionaries = new ArrayList<>();
 
-    public enum Type {
+    public enum Role {
         MEMBER, ADMIN
     }
 
     public Member(int id, String firstName,
                   String lastName,
                   int age, String email,
-                  String password, Type type) {
+                  String password, Role role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.email = email;
         this.password = password;
-        this.type = type;
+        this.role = role;
     }
+
+
 }
