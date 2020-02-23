@@ -1,8 +1,10 @@
 package tw.waterball.vocabnotes.spring.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -14,6 +16,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import tw.waterball.vocabnotes.spring.profiles.Dev;
+import tw.waterball.vocabnotes.spring.profiles.Prod;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -22,8 +25,19 @@ import javax.sql.DataSource;
 public class JpaConfig {
 
     @Bean
+    @Prod
+    public DataSource mysql() {
+        return DataSourceBuilder.create()
+                .driverClassName("com.mysql.jdbc.Driver")
+                .url("jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/heroku_496f55a110503bd")
+                .username("b438f45aabed78")
+                .password("1fca831243d8758")
+                .build();
+    }
+
+    @Bean
     @ConditionalOnMissingBean
-    public EmbeddedDatabase embeddedDatabase() {
+    public DataSource embeddedDatabase() {
         return new EmbeddedDatabaseBuilder()
                 .addScript("schema.sql")
                 .addScript("data.sql")
@@ -31,11 +45,12 @@ public class JpaConfig {
                 .build();
     }
 
+
     @Bean
     public JpaVendorAdapter jpaVendorAdapter(Environment env) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
-        vendorAdapter.setShowSql(env.acceptsProfiles(Profiles.of(Dev.name)));
+        vendorAdapter.setShowSql(!env.acceptsProfiles(Profiles.of(Prod.name)));
         return vendorAdapter;
     }
 
@@ -43,7 +58,6 @@ public class JpaConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                        JpaVendorAdapter jpaVendorAdapter) {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setPersistenceUnitName("my_em");
         factory.setJpaVendorAdapter(jpaVendorAdapter);
         factory.setPackagesToScan("tw.waterball.vocabnotes.models");
         factory.setDataSource(dataSource);
