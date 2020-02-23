@@ -1,6 +1,10 @@
 package tw.waterball.vocabnotes.api;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +44,9 @@ public class PublicVocabController {
         publicVocabService.modifyDictionary(id, dictionaryPatch.title, dictionaryPatch.description);
     }
 
+    @Accessors(fluent = true) @Setter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class DictionaryPatch {
         @Size(min = 1, max = 80)
         public String title;
@@ -78,6 +84,8 @@ public class PublicVocabController {
         publicVocabService.patchWordGroup(id, wordGroupPatch.title);
     }
 
+    @Accessors(fluent = true) @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class WordGroupPatch {
         @Size(min = 1, max = 50)

@@ -5,35 +5,40 @@ import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Since we didn't override the 'equals and hashcode' method in our entities,
  * we have to provide own utility for testing equality.
- *
+ * <p>
  * This is really redundant as we have to copy the code from java.utils.Collection#equals.
  *
  * <p>
  * The reason of avoiding using Object.equals is explained in the following link
  * Quoted: "Equals and hashCode must behave consistently across all entity state transitions.":
  * https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
- *
+ * <p>
  * TODO Is there any way to perform equality test among entities, rather than Object.equals ?
  *
  * @author johnny850807@gmail.com (waterball)
  */
 public class EntityEquality {
-
     public static boolean equals(Object o1, Object o2) {
+        return equals(o1, o2, true);
+    }
+
+    public static boolean equals(Object o1, Object o2, boolean testAssociations) {
         if (o1 != null && o2 != null) {
             if (o1.getClass() != o2.getClass()) {
                 return false;
             } else if (o1 instanceof Member) {
                 return equals((Member) o1, (Member) o2);
             } else if (o1 instanceof Dictionary) {
-                return equals((Dictionary) o1, (Dictionary) o2);
+                return equals((Dictionary) o1, (Dictionary) o2, testAssociations);
             } else if (o1 instanceof WordGroup) {
-                return equals((WordGroup) o1, (WordGroup) o2);
+                return equals((WordGroup) o1, (WordGroup) o2, testAssociations);
             } else if (o1 instanceof Word) {
                 return equals((Word) o1, (Word) o2);
             } else {
@@ -43,6 +48,9 @@ public class EntityEquality {
     }
 
     public static boolean equals(Member m1, Member m2) {
+        if (m1 == m2) {
+            return true;
+        }
         return Objects.equals(m1.getId(), m2.getId()) &&
                 Objects.equals(m1.getFirstName(), m2.getFirstName()) &&
                 Objects.equals(m1.getLastName(), m2.getLastName()) &&
@@ -53,25 +61,34 @@ public class EntityEquality {
                 Objects.equals(m1.getEmail(), m2.getEmail());
     }
 
-    public static boolean equals(Dictionary d1, Dictionary d2) {
+    public static boolean equals(Dictionary d1, Dictionary d2, boolean testAssociations) {
+        if (d1 == d2) {
+            return true;
+        }
         return Objects.equals(d1.getId(), d2.getId()) &&
                 Objects.equals(d1.getTitle(), d2.getTitle()) &&
                 Objects.equals(d1.getDescription(), d2.getDescription()) &&
                 equals(d1.getOwner(), d2.getOwner()) &&
                 Objects.equals(d1.getType(), d2.getType()) &&
-                equals(d1.getWordGroups(), d2.getWordGroups());
+                (!testAssociations || equals(d1.getWordGroups(), d2.getWordGroups()));
 
     }
 
-    public static boolean equals(WordGroup wg1, WordGroup wg2) {
+    public static boolean equals(WordGroup wg1, WordGroup wg2, boolean testAssociations) {
+        if (wg1 == wg2) {
+            return true;
+        }
         return Objects.equals(wg1.getId(), wg2.getId()) &&
                 wg1.hasTitle() == wg2.hasTitle() &&
                 !wg1.hasTitle() || Objects.equals(wg1.getTitle(), wg2.getTitle()) &&
-                equals(wg1.getWords(), wg2.getWords());
+                (!testAssociations || equals(wg1.getWords(), wg2.getWords()));
     }
 
 
     public static boolean equals(Word w1, Word w2) {
+        if (w1 == w2) {
+            return true;
+        }
         return Objects.equals(w1.getId(), w2.getId()) &&
                 Objects.equals(w1.getImageUrl(), w2.getImageUrl()) &&
                 Objects.equals(w1.getName(), w2.getName()) &&
@@ -86,7 +103,7 @@ public class EntityEquality {
             return false;
         try {
             return containsAll(c1, c2);
-        } catch (ClassCastException | NullPointerException unused)   {
+        } catch (ClassCastException | NullPointerException unused) {
             return false;
         }
     }
@@ -100,9 +117,9 @@ public class EntityEquality {
 
     private static boolean contains(Collection c, Object o) {
         Iterator it = c.iterator();
-        if (o==null) {
+        if (o == null) {
             while (it.hasNext())
-                if (it.next()==null)
+                if (it.next() == null)
                     return true;
         } else {
             while (it.hasNext())

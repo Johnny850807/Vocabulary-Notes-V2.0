@@ -38,20 +38,25 @@ public class WordGroup {
         words.remove(word);
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     /**
      * If the title is not set, defaulted at all contained words separated by '/'.
      * For example a word group of {'apple', 'orange', 'lemon'}
      * is named "apple / orange / lemon" at default.
      */
-    public String getTitle() {
-        if (title == null || title.isEmpty()) {
-            return words.stream().map(Word::getName)
+    public static String getDisplayTitle(WordGroup wordGroup) {
+        if (wordGroup.getTitle() == null || wordGroup.getTitle().isEmpty()) {
+            return wordGroup.getWords().stream().map(Word::getName)
                     .collect(Collectors.joining(" / "));
         }
-        return title;
+        return wordGroup.getTitle();
     }
 
     public boolean hasTitle() {
         return title != null;
     }
+
 }

@@ -9,12 +9,13 @@ import static tw.waterball.vocabnotes.utils.RandomGenerator.randomHttpUrl;
 import static tw.waterball.vocabnotes.utils.RandomGenerator.randomString;
 
 public class RandomEntityGenerator {
-    private final static Random RANDOM =new Random();
+    private final static Random RANDOM = new Random();
+    private static Set<String> wordGroupTitles = Collections.synchronizedSet(new HashSet<>());
 
     public static Member randomMember(Member.Role role) {
         Member member = new Member();
         member.setRole(role);
-        member.setAge(RANDOM.nextInt(80)+1);
+        member.setAge(RANDOM.nextInt(80) + 1);
         member.setEmail(randomString(5, 10) + "@email.com");
         member.setFirstName(randomString(5, 10));
         member.setLastName(randomString(5, 10));
@@ -30,25 +31,34 @@ public class RandomEntityGenerator {
         dictionary.setDescription(randomString(0, 100, true));
         dictionary.setType(type);
 
-        int wordGroupCount = RANDOM.nextInt(maxWordGroupCount-minWordGroupCount+1)+minWordGroupCount;
-        Set<WordGroup> wordGroups = new HashSet<>();
-        for (int i = 0; i < wordGroupCount; i++) {
-            wordGroups.add(randomWordGroup(minWordCount, maxWordCount));
+        if (minWordGroupCount > 0) {
+            int wordGroupCount = RANDOM.nextInt(maxWordGroupCount - minWordGroupCount + 1) + minWordGroupCount;
+            Set<WordGroup> wordGroups = new HashSet<>();
+            for (int i = 0; i < wordGroupCount; i++) {
+                wordGroups.add(randomWordGroup(minWordCount, maxWordCount));
+            }
+            dictionary.setWordGroups(wordGroups);
         }
-        dictionary.setWordGroups(wordGroups);
         return dictionary;
     }
 
     public static WordGroup randomWordGroup(int minWordCount, int maxWordCount) {
         WordGroup wordGroup = new WordGroup();
-        wordGroup.setTitle(RANDOM.nextBoolean() ? null : randomString(4, 15, false));
-        minWordCount = Math.max(2, minWordCount);
-        int wordCount = RANDOM.nextInt(maxWordCount-minWordCount+1)+minWordCount;
-        Set<Word> words = new HashSet<>();
-        for (int i = 0; i < wordCount; i++) {
-            words.add(randomWord());
+
+        // make random unique title
+        do {
+            wordGroup.setTitle(RANDOM.nextBoolean() ? null : randomString(4, 15, false));
+        } while (wordGroupTitles.contains(wordGroup.getTitle()));
+        wordGroupTitles.add(wordGroup.getTitle());
+
+        if (minWordCount > 0) {
+            int wordCount = RANDOM.nextInt(maxWordCount - minWordCount + 1) + minWordCount;
+            Set<Word> words = new HashSet<>();
+            for (int i = 0; i < wordCount; i++) {
+                words.add(randomWord());
+            }
+            wordGroup.setWords(words);
         }
-        wordGroup.setWords(words);
         return wordGroup;
     }
 
