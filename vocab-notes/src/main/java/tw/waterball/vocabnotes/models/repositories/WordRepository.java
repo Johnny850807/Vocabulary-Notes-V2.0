@@ -6,6 +6,8 @@ import tw.waterball.vocabnotes.models.entities.Word;
 
 import java.util.Optional;
 
+// TODO JdbcSQLIntegrityConstraintViolationException will be thrown on delete method due to
+//      many-to-many relationship
 @Repository
 public interface WordRepository extends CrudRepository<Word, Integer> {
     Optional<Word> findByName(String wordName);

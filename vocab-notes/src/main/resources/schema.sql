@@ -13,7 +13,7 @@ CREATE TABLE member
   password   VARCHAR(128) NOT NULL,
   exp        INTEGER                  DEFAULT 0,
   level      INTEGER                  DEFAULT 1,
-  role       ENUM ('member', 'admin') DEFAULT 'member'
+  role       ENUM ('MEMBER', 'ADMIN') DEFAULT 'member'
 );
 
 CREATE TABLE dictionary
@@ -21,11 +21,11 @@ CREATE TABLE dictionary
   id          INTEGER PRIMARY KEY AUTO_INCREMENT,
   title       NVARCHAR(80)           NOT NULL,
   description NVARCHAR(300)          NOT NULL,
-  type        ENUM ('public', 'own') NOT NULL,
+  type        ENUM ('PUBLIC', 'OWN') NOT NULL,
   owner_id    INTEGER,
   FOREIGN KEY (owner_id) REFERENCES member (id) ON DELETE CASCADE,
-  CHECK (type = 'public' AND owner_id IS NULL
-    OR type = 'own' AND owner_id IS NOT NULL)
+  CHECK (type = 'PUBLIC' AND owner_id IS NULL
+    OR type = 'OWN' AND owner_id IS NOT NULL)
 );
 
 CREATE TABLE wordgroup

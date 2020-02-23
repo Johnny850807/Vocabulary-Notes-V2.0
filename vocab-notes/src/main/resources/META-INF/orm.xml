@@ -18,6 +18,9 @@
                 <column name="last_name"
                         nullable="false"/>
             </basic>
+            <basic name="role">
+                <enumerated>STRING</enumerated>
+            </basic>
             <one-to-many name="ownDictionaries" 
                          mapped-by="owner"/>
         </attributes>
@@ -29,6 +32,9 @@
             <id name="id">
                 <generated-value strategy="IDENTITY"/>
             </id>
+            <basic name="type">
+                <enumerated>STRING</enumerated>
+            </basic>
             <many-to-one name="owner">
                 <join-column name="owner_id"/>
             </many-to-one>

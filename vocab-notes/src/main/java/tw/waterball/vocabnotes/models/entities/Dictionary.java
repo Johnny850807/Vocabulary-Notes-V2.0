@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -35,7 +36,7 @@ public class Dictionary {
     private Type type;
 
     @Singular
-    private Set<WordGroup> wordGroups = new HashSet<>();
+    private transient Set<WordGroup> wordGroups = new HashSet<>();
 
     public void addWordGroup(WordGroup wordGroup) {
         wordGroups.add(wordGroup);
@@ -47,11 +48,6 @@ public class Dictionary {
 
     public enum Type {
         PUBLIC, OWN
-    }
-
-    public void setOwner(Member owner) {
-        this.owner = owner;
-        owner.getOwnDictionaries().add(this);
     }
 
 }

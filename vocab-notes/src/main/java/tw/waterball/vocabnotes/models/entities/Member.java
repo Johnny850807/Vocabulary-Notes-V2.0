@@ -38,7 +38,7 @@ public class Member {
     private Role role;
 
     @ToString.Exclude
-    private List<Dictionary> ownDictionaries = new ArrayList<>();
+    private transient List<Dictionary> ownDictionaries = new ArrayList<>();
 
     public enum Role {
         MEMBER, ADMIN

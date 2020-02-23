@@ -8,7 +8,6 @@ import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
-import tw.waterball.vocabnotes.utils.RandomEntityGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -42,19 +41,7 @@ class RepositoryTest extends BaseSpringTest {
     public void testDictionaryRepository() {
         Dictionary toeic = dictionaryRepository.findById(1).get();
 
-        Dictionary expect = RandomEntityGenerator.randomDictionary(Dictionary.Type.OWN,
-                3, 5, 2, 7);
-        assertEntityEquals(expect, toeic);
-
-        // change its id then add again
-        expect.setId(2);
-        dictionaryRepository.save(expect);
-        Dictionary found = dictionaryRepository.findById(2).get();
-        assertEntityEquals(expect, found);
-    }
-
-    private Dictionary testDictionary() {
-        return Dictionary.builder().id(1)
+        Dictionary expect = Dictionary.builder().id(1)
                 .title("TOEIC Level 1")
                 .description("The Toeic basic dictionary.")
                 .type(Dictionary.Type.OWN)
@@ -66,5 +53,14 @@ class RepositoryTest extends BaseSpringTest {
                         .word(new Word(3, "stipulation", "", "http://www.hicounsel.com/wp-content/uploads/2017/07/maxresdefault.jpg"))
                         .build())
                 .build();
+
+        assertEntityEquals(expect, toeic);
+
+        // change its id then add again
+        expect.setId(2);
+        dictionaryRepository.save(expect);
+        Dictionary found = dictionaryRepository.findById(2).get();
+        assertEntityEquals(expect, found);
     }
+
 }

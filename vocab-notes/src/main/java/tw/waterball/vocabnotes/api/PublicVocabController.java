@@ -1,5 +1,7 @@
 package tw.waterball.vocabnotes.api;
 
+import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,10 @@ import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.services.PublicVocabService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +36,16 @@ public class PublicVocabController {
 
     @PatchMapping("/dictionaries/{id}")
     public void patchDictionary(@PathVariable int id,
-                                 @RequestBody @Valid Dictionary dictionary) {
-        publicVocabService.patchDictionary(id, Optional.ofNullable(dictionary.getTitle()),
-                Optional.ofNullable(dictionary.getDescription()));
+                                 @RequestBody @Valid DictionaryPatch dictionaryPatch) {
+        publicVocabService.modifyDictionary(id, dictionaryPatch.title, dictionaryPatch.description);
+    }
+
+    @AllArgsConstructor
+    public static class DictionaryPatch {
+        @Size(min = 1, max = 80)
+        public String title;
+        @Size(min = 1, max = 300)
+        public String description;
     }
 
     @DeleteMapping("/dictionaries/{id}")
@@ -41,14 +54,17 @@ public class PublicVocabController {
     }
 
     @GetMapping("/dictionaries")
-    public List<Dictionary> getDictionaries(@RequestParam Integer limit,
-                                            @RequestParam Integer offset) {
-        return publicVocabService.getDictionaries(limit, offset);
+    public List<Dictionary> getDictionaries(@RequestParam(required = false) Integer limit,
+                                            @RequestParam(required = false) Integer offset) {
+        return publicVocabService.getDictionaries(offset, limit);
     }
 
     @PostMapping("/dictionaries")
-    public Dictionary createDictionary(@RequestBody @Valid Dictionary dictionary) {
-        return publicVocabService.createDictionary(dictionary);
+    public ResponseEntity createDictionary(@RequestBody @Valid Dictionary dictionary) {
+        if (dictionary.getId() != null) {
+            return ResponseEntity.badRequest().body("You must not provide the Dictionary's id while creating it.");
+        }
+        return ResponseEntity.ok(publicVocabService.createDictionary(dictionary));
     }
 
     @GetMapping("/wordgroups/{id}")
@@ -57,9 +73,15 @@ public class PublicVocabController {
     }
 
     @PatchMapping("/wordgroups/{id}")
-    public void getWordGroup(@PathVariable int id,
-                                  @RequestBody @Valid WordGroup wordGroup) {
-        publicVocabService.patchWordGroup(id, wordGroup.getTitle());
+    public void patchWordGroup(@PathVariable int id,
+                                  @RequestBody @Valid WordGroupPatch wordGroupPatch) {
+        publicVocabService.patchWordGroup(id, wordGroupPatch.title);
+    }
+
+    @AllArgsConstructor
+    public static class WordGroupPatch {
+        @Size(min = 1, max = 50)
+        public String title;
     }
 
     @DeleteMapping("/wordgroups/{id}")
@@ -68,8 +90,11 @@ public class PublicVocabController {
     }
 
     @PostMapping("/wordgroups")
-    public WordGroup createWordGroup(@RequestBody @Valid WordGroup wordGroup) {
-        return publicVocabService.createWordGroup(wordGroup);
+    public ResponseEntity createWordGroup(@RequestBody @Valid WordGroup wordGroup) {
+        if (wordGroup.getId() != null) {
+            return ResponseEntity.badRequest().body("You must not provide the WordGroup's id while creating it.");
+        }
+        return ResponseEntity.ok(publicVocabService.createWordGroup(wordGroup));
     }
 
     @GetMapping("/word/{name}")
@@ -89,8 +114,11 @@ public class PublicVocabController {
     }
 
     @PostMapping("/word")
-    public Word createWord(@RequestBody @Valid Word word) {
-        return publicVocabService.createWord(word);
+    public ResponseEntity createWord(@RequestBody @Valid Word word) {
+        if (word.getId() != null) {
+            return ResponseEntity.badRequest().body("You must not provide the Word's id while creating it.");
+        }
+        return ResponseEntity.ok(publicVocabService.createWord(word));
     }
 
     @PutMapping("/word/{id}")
@@ -125,7 +153,9 @@ public class PublicVocabController {
     }
 
     @GetMapping("/dictionaries/{dictionaryId}/wordgroups")
-    public List<WordGroup> getWordGroups(@PathVariable int dictionaryId, Integer offset, Integer limit) {
+    public List<WordGroup> getWordGroups(@PathVariable int dictionaryId,
+                                         @RequestParam(required = false) Integer offset,
+                                         @RequestParam(required = false) Integer limit) {
         return publicVocabService.getWordGroups(dictionaryId, offset, limit);
     }
 

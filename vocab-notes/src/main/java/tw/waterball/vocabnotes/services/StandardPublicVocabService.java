@@ -1,5 +1,6 @@
 package tw.waterball.vocabnotes.services;
 
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.api.exceptions.BadRequestException;
@@ -13,11 +14,12 @@ import tw.waterball.vocabnotes.models.repositories.WordRepository;
 import tw.waterball.vocabnotes.utils.RegexUtils;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
+@SuppressWarnings("Duplicates")
 public class StandardPublicVocabService implements PublicVocabService {
     private final static String DICTIONARY = "dictionary";
     private final static String WORD_GROUP = "word";
@@ -42,10 +44,11 @@ public class StandardPublicVocabService implements PublicVocabService {
     }
 
     @Override
-    public List<Dictionary> getDictionaries(Integer offset, Integer limit) {
+    public List<Dictionary> getDictionaries(@Nullable Integer offset, @Nullable Integer limit) {
         offset = offset == null ? 0 : offset;
-        if (limit == null) {
-            return dictionaryRepository.findAll(new OffsetPageRequest(offset)).toList();
+        limit = limit == null ? Integer.MAX_VALUE : limit;
+        if (0 == limit) {
+            return Collections.emptyList();
         }
         return dictionaryRepository.findAll(new OffsetPageRequest(offset, limit)).toList();
     }
@@ -68,10 +71,14 @@ public class StandardPublicVocabService implements PublicVocabService {
     }
 
     @Override
-    public void patchDictionary(int dictionaryId, Optional<String> title, Optional<String> description) {
+    public void modifyDictionary(int dictionaryId, @Nullable String title, @Nullable String description) {
         Dictionary dictionary = getDictionary(dictionaryId);
-        title.ifPresent(dictionary::setTitle);
-        description.ifPresent(dictionary::setDescription);
+        if (title != null) {
+            dictionary.setTitle(title);
+        }
+        if (description != null) {
+            dictionary.setDescription(description);
+        }
         dictionaryRepository.save(dictionary);
     }
 
@@ -94,7 +101,9 @@ public class StandardPublicVocabService implements PublicVocabService {
 
     @Override
     public void deleteWordGroup(int wordGroupId) {
-        wordGroupRepository.deleteById(wordGroupId);
+        WordGroup wordGroup = getWordGroup(wordGroupId);
+        wordGroup.removeAllWords();
+        wordGroupRepository.delete(wordGroup);
     }
 
     @Override
@@ -155,10 +164,11 @@ public class StandardPublicVocabService implements PublicVocabService {
     }
 
     @Override
-    public List<WordGroup> getWordGroups(int dictionaryId, Integer offset, Integer limit) {
+    public List<WordGroup> getWordGroups(int dictionaryId, @Nullable Integer offset, @Nullable Integer limit) {
         offset = offset == null ? 0 : offset;
-        if (limit == null) {
-            return dictionaryRepository.findWordGroupsFromDictionary(dictionaryId, offset, Integer.MAX_VALUE);
+        limit = limit == null ? Integer.MAX_VALUE : limit;
+        if (limit == 0) {
+            return Collections.emptyList();
         }
         return dictionaryRepository.findWordGroupsFromDictionary(dictionaryId, offset, limit);
     }

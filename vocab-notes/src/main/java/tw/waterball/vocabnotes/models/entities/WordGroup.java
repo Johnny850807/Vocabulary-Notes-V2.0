@@ -30,6 +30,10 @@ public class WordGroup {
         words.add(word);
     }
 
+    public void removeAllWords() {
+        words.clear();
+    }
+
     public void removeWord(Word word) {
         words.remove(word);
     }
