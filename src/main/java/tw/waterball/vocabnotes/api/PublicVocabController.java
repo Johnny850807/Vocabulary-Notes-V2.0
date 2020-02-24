@@ -149,7 +149,7 @@ public class PublicVocabController {
         publicVocabService.updateWord(word);
     }
 
-    @PostMapping("/wordgroup/{wordGroupId}/words/{wordName}")
+    @PostMapping("/wordgroups/{wordGroupId}/words/{wordName}")
     public void addWordIntoWordGroup(@PathVariable int wordGroupId,
                                      @PathVariable String wordName) {
         publicVocabService.addWordIntoWordGroup(wordName, wordGroupId);
@@ -161,7 +161,7 @@ public class PublicVocabController {
         publicVocabService.addWordGroupIntoDictionary(wordGroupId, dictionaryId);
     }
 
-    @DeleteMapping("/wordgroup/{wordGroupId}/words/{wordName}")
+    @DeleteMapping("/wordgroups/{wordGroupId}/words/{wordName}")
     public void removeWordFromWordGroup(@PathVariable int wordGroupId,
                                         @PathVariable String wordName) {
         publicVocabService.removeWordFromWordGroup(wordName, wordGroupId);

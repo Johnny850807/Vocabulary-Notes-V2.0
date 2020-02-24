@@ -109,7 +109,7 @@ public class EntityEquality {
     }
 
     // code copy and modify from java.utils.Collection#equals
-    private static boolean equals(Collection<? extends IdEntity> c1, Collection<? extends IdEntity> c2) {
+    public static boolean equals(Collection<? extends IdEntity> c1, Collection<? extends IdEntity> c2) {
         if (c1 == c2)
             return true;
         if (c1.size() != c2.size())
@@ -121,14 +121,14 @@ public class EntityEquality {
         }
     }
 
-    private static boolean containsAll(Collection<? extends IdEntity> c1, Collection<? extends IdEntity> c2) {
+    public static boolean containsAll(Collection<? extends IdEntity> c1, Collection<? extends IdEntity> c2) {
         for (IdEntity e : c2)
             if (!contains(c1, e))
                 return false;
         return true;
     }
 
-    private static boolean contains(Collection<? extends IdEntity> c, IdEntity o) {
+    public static boolean contains(Collection<? extends IdEntity> c, IdEntity o) {
         Iterator<? extends IdEntity> it = c.iterator();
         if (o == null) {
             while (it.hasNext())

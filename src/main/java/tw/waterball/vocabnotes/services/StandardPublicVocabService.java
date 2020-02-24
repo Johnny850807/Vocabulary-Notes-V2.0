@@ -41,8 +41,8 @@ import java.util.List;
 @SuppressWarnings("Duplicates")
 public class StandardPublicVocabService implements PublicVocabService {
     private final static String DICTIONARY = "dictionary";
-    private final static String WORD_GROUP = "word";
-    private final static String WORD = "word-group";
+    private final static String WORD_GROUP = "word-group";
+    private final static String WORD = "word";
     private DictionaryRepository dictionaryRepository;
     private WordGroupRepository wordGroupRepository;
     private WordRepository wordRepository;
