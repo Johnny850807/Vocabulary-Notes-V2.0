@@ -16,10 +16,7 @@
 
 package tw.waterball.vocabnotes.utils;
 
-import tw.waterball.vocabnotes.models.entities.Dictionary;
-import tw.waterball.vocabnotes.models.entities.Member;
-import tw.waterball.vocabnotes.models.entities.Word;
-import tw.waterball.vocabnotes.models.entities.WordGroup;
+import tw.waterball.vocabnotes.models.entities.*;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,11 +38,11 @@ import java.util.Objects;
  * @author johnny850807@gmail.com (waterball)
  */
 public class EntityEquality {
-    public static boolean equals(Object o1, Object o2) {
+    public static boolean equals(IdEntity o1, IdEntity o2) {
         return equals(o1, o2, true);
     }
 
-    public static boolean equals(Object o1, Object o2, boolean testAssociations) {
+    public static boolean equals(IdEntity o1, IdEntity o2, boolean testAssociations) {
         if (o1 != null && o2 != null) {
             if (o1.getClass() != o2.getClass()) {
                 return false;
@@ -112,7 +109,7 @@ public class EntityEquality {
     }
 
     // code copy and modify from java.utils.Collection#equals
-    private static boolean equals(Collection c1, Collection c2) {
+    private static boolean equals(Collection<? extends IdEntity> c1, Collection<? extends IdEntity> c2) {
         if (c1 == c2)
             return true;
         if (c1.size() != c2.size())
@@ -124,15 +121,15 @@ public class EntityEquality {
         }
     }
 
-    private static boolean containsAll(Collection c1, Collection c2) {
-        for (Object e : c2)
+    private static boolean containsAll(Collection<? extends IdEntity> c1, Collection<? extends IdEntity> c2) {
+        for (IdEntity e : c2)
             if (!contains(c1, e))
                 return false;
         return true;
     }
 
-    private static boolean contains(Collection c, Object o) {
-        Iterator it = c.iterator();
+    private static boolean contains(Collection<? extends IdEntity> c, IdEntity o) {
+        Iterator<? extends IdEntity> it = c.iterator();
         if (o == null) {
             while (it.hasNext())
                 if (it.next() == null)

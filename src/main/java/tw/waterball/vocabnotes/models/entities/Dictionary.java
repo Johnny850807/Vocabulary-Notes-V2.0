@@ -17,13 +17,11 @@
 package tw.waterball.vocabnotes.models.entities;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -31,13 +29,13 @@ import java.util.Set;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
 @ToString
 
 @Entity
-public class Dictionary {
+public class Dictionary implements IdEntity {
     private Integer id;
 
     @NotNull
@@ -56,6 +54,7 @@ public class Dictionary {
 
     @Singular
     private transient Set<WordGroup> wordGroups = new HashSet<>();
+
 
     public void addWordGroup(WordGroup wordGroup) {
         wordGroups.add(wordGroup);

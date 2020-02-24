@@ -14,23 +14,14 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import tw.waterball.vocabnotes.models.entities.IdEntity;
-import tw.waterball.vocabnotes.utils.EntityEquality;
+package tw.waterball.vocabnotes.models.entities;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@DataJpaTest
-@ExtendWith(SpringExtension.class)
-public class BaseSpringTest {
-    public void assertEntityEquals(IdEntity o1, IdEntity o2) {
-        Assertions.assertTrue(EntityEquality.equals(o1, o2),
-                "Two " + o1.getClass().getSimpleName() +"s are not equals.");
-    }
+public interface IdEntity {
+
+    Integer getId();
+
+    void setId(Integer id);
 }

@@ -18,7 +18,7 @@ package tw.waterball.vocabnotes.models.entities;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
 @ToString
 
 @Entity
-public class Member {
+public class Member implements IdEntity {
     private Integer id;
 
     @Size(min = 1, max=18)

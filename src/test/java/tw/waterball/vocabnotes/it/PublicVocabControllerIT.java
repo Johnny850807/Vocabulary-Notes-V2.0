@@ -17,6 +17,10 @@
 package tw.waterball.vocabnotes.it;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
+import com.sun.javafx.geom.transform.Identity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,10 +36,13 @@ import tw.waterball.vocabnotes.api.PublicVocabController;
 import tw.waterball.vocabnotes.api.PublicVocabController.DictionaryPatch;
 import tw.waterball.vocabnotes.api.PublicVocabController.WordGroupPatch;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
+import tw.waterball.vocabnotes.models.entities.IdEntity;
+import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.utils.EntityEquality;
 import tw.waterball.vocabnotes.utils.RandomEntityGenerator;
 
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -75,6 +82,7 @@ public class PublicVocabControllerIT {
     private final static String PATCH_DICT_TITLE = "Patch-Dict-title";
     private final static String PATCH_DICT_DESCRIPTION = "Patch-Dict-description";
     private final static String PATCH_WG_TITLE_PREFIX = "PP-";
+    private final static String PATCH_WD_IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Test-Logo.svg/783px-Test-Logo.svg.png";
 
     /**
      * Test with the following scenario:
@@ -120,45 +128,25 @@ public class PublicVocabControllerIT {
     public void testAllEndpoints() throws Exception {
         testDictionary();
         testWordGroups();
+        testWords();
     }
 
     private void testDictionary() throws Exception {
         Dictionary D = RandomEntityGenerator.randomDictionary(Dictionary.Type.PUBLIC,
                 0, 0, 0, 0);
 
-        D.setId(postDictionaryAndReturnId(D));
-        assertMvcResponseCorrect(getDictionary(D.getId()), D);
+        D.setId(postEntityAndReturnId(D, "/dictionaries"));
+        assertMvcResultCorrect(getEntityResult("/dictionaries/{id}", D.getId()), D);
 
         patchDictionary(D);
-        assertMvcResponseCorrect(getDictionary(D.getId()), D);
-    }
-
-    private int postDictionaryAndReturnId(Dictionary D) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post(apiPrefix("/dictionaries"))
-                .content(gson.toJson(D)).contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andReturn();
-        Dictionary result = gson.fromJson(mvcResult.getResponse().getContentAsString(), Dictionary.class);
-        return result.getId();
-    }
-
-    private MvcResult getDictionary(int dictionaryId) throws Exception {
-        return mockMvc.perform(get(apiPrefix("/dictionaries/{id}"), dictionaryId))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andReturn();
+        assertMvcResultCorrect(getEntityResult("/dictionaries/{id}", D.getId()), D);
     }
 
     private void patchDictionary(Dictionary D) throws Exception {
-        mockMvc.perform(patch(apiPrefix("/dictionaries/{id}"), D.getId())
-                .content(gson.toJson(new DictionaryPatch().title(PATCH_DICT_TITLE))).contentType(APPLICATION_JSON))
-                .andExpect(status().isOk());
+        patchEntity(new DictionaryPatch().title(PATCH_DICT_TITLE), "/dictionaries/{id}", D.getId());
         D.setTitle(PATCH_DICT_TITLE);
 
-        mockMvc.perform(patch(apiPrefix("/dictionaries/{id}"), D.getId())
-                .content(gson.toJson(new DictionaryPatch().description(PATCH_DICT_DESCRIPTION))).contentType(APPLICATION_JSON))
-                .andExpect(status().isOk());
+        patchEntity(new DictionaryPatch().description(PATCH_DICT_DESCRIPTION), "/dictionaries/{id}", D.getId());
         D.setDescription(PATCH_DICT_DESCRIPTION);
     }
 
@@ -170,11 +158,13 @@ public class PublicVocabControllerIT {
 
         WGs.parallelStream().forEach(wg -> {
             try {
-                wg.setId(postWordGroupAndReturnId(wg));
-                assertMvcResponseCorrect(getWordGroup(wg.getId()), wg);
+                wg.setId(postEntityAndReturnId(wg, "/wordgroups"));
+                assertMvcResultCorrect(getEntityResult("/wordgroups/{id}", wg.getId()), wg);
                 if (wg.getTitle() != null) {
-                    patchWordGroup(wg);
-                    assertMvcResponseCorrect(getWordGroup(wg.getId()), wg);
+                    patchEntity(new WordGroupPatch(PATCH_WG_TITLE_PREFIX + wg.getTitle()),
+                            "/wordgroups/{id}", wg.getId());
+                    wg.setTitle(PATCH_WG_TITLE_PREFIX + wg.getTitle());
+                    assertMvcResultCorrect(getEntityResult("/wordgroups/{id}", wg.getId()), wg);
                 }
             } catch (Exception e) {
                 fail(e);
@@ -182,38 +172,84 @@ public class PublicVocabControllerIT {
         });
     }
 
-    private int postWordGroupAndReturnId(WordGroup WG) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(post(apiPrefix("/wordgroups"))
-                .content(gson.toJson(WG)).contentType(APPLICATION_JSON))
+
+
+    /**
+     * 3. Test Words (in parallel)
+     * 3.1 Post 10 random Words 'Wds'
+     * 3.2 Get every word in 'Wds' and verify
+     * 3.3 Patch every word in 'Wds' with imageUrl 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Test-Logo.svg/783px-Test-Logo.svg.png'
+     * 3.4 Get every word in 'Wds' and verify
+     * 3.5 Create a random word 'W'
+     * 3.6 Put every word with new value 'W'
+     * 3.7 Get every word in 'Wds' and verify
+     */
+    private void testWords() {
+        List<Word> Wds = new ArrayList<>(10);
+        for (int i = 0; i < 10; i++) {
+            Wds.add(RandomEntityGenerator.randomWord());
+        }
+
+        Wds.parallelStream().forEach(wd -> {
+            try {
+                wd.setId(postEntityAndReturnId(wd, "/words"));
+                assertMvcResultCorrect(getEntityResult("/words/{name}", wd.getName()), wd);
+                patchEntity(PATCH_WD_IMAGE_URL, "/words/{name}", wd.getName());
+                wd.setImageUrl(PATCH_WD_IMAGE_URL);
+                assertMvcResultCorrect(getEntityResult("/words/{name}", wd.getName()), wd);
+                Word W = RandomEntityGenerator.randomWord();
+                putEntity(W, "/words/{id}", wd.getId());
+                W.setId(wd.getId());
+                assertMvcResultCorrect(getEntityResult("/words/{name}", W.getName()), W);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private int postEntityAndReturnId(IdEntity idEntity, String url) throws Exception {
+        MvcResult mvcResult = mockMvc.perform(post(apiPrefix(url))
+                .content(gson.toJson(idEntity)).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
-        Dictionary result = gson.fromJson(mvcResult.getResponse().getContentAsString(), Dictionary.class);
-        return result.getId();
+
+        JsonElement jsonElement = Streams.parse(new JsonReader(new StringReader(mvcResult.getResponse().getContentAsString())));
+        return jsonElement.getAsJsonObject().get("id").getAsInt();
     }
 
-    private MvcResult getWordGroup(int wordGroupId) throws Exception {
-        return mockMvc.perform(get(apiPrefix("/wordgroups/{id}"), wordGroupId))
+    private MvcResult getEntityResult(String url, Object pk) throws Exception {
+        return mockMvc.perform(get(apiPrefix(url), pk))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
     }
 
-    private void patchWordGroup(WordGroup wg) throws Exception {
-        mockMvc.perform(patch(apiPrefix("/wordgroups/{id}"), wg.getId())
-                .content(gson.toJson(new WordGroupPatch().title(PATCH_WG_TITLE_PREFIX + wg.getTitle()))).contentType(APPLICATION_JSON))
+    private void patchEntity(Object bodyObj, String url, Object pk) throws Exception {
+        mockMvc.perform(patch(apiPrefix(url), pk)
+                .content(gson.toJson(bodyObj)).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk());
-        wg.setTitle(PATCH_WG_TITLE_PREFIX + wg.getTitle());
+    }
+
+    private void patchEntity(String textPatch, String url, Object pk) throws Exception {
+        mockMvc.perform(patch(apiPrefix(url), pk)
+                .content(textPatch).contentType(MediaType.TEXT_PLAIN))
+                .andExpect(status().isOk());
+    }
+
+    private void putEntity(IdEntity newEntity, String url, Object pk) throws Exception {
+        mockMvc.perform(put(apiPrefix(url), pk)
+                .content(gson.toJson(newEntity)).contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void assertMvcResponseCorrect(MvcResult mvcResult, T expectedEntity) throws UnsupportedEncodingException {
+    private <T extends IdEntity> void assertMvcResultCorrect(MvcResult mvcResult, T expectedEntity) throws UnsupportedEncodingException {
         String json = mvcResult.getResponse().getContentAsString();
         Class<T> type = (Class<T>) expectedEntity.getClass();
         T actualEntity = gson.fromJson(json, type);
         assertTrue(EntityEquality.equals(actualEntity, expectedEntity, false));
     }
-
 
     private static String apiPrefix(String resourceUrlFormat, Object... params) {
         return API_PREFIX + String.format(resourceUrlFormat, params);

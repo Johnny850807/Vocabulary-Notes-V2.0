@@ -16,11 +16,9 @@
 
 package tw.waterball.vocabnotes.models.entities;
 
-import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +34,7 @@ import java.util.stream.Collectors;
 @ToString
 
 @Entity
-public class WordGroup {
+public class WordGroup implements IdEntity{
     private Integer id;
 
     @Size(min = 1, max = 50)

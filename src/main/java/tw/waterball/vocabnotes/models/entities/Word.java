@@ -17,6 +17,7 @@
 package tw.waterball.vocabnotes.models.entities;
 
 import com.sun.istack.NotNull;
+import com.sun.javafx.geom.transform.Identity;
 import lombok.*;
 import tw.waterball.vocabnotes.utils.RegexUtils;
 
@@ -34,7 +35,7 @@ import java.util.List;
 @ToString
 
 @Entity
-public class Word {
+public class Word implements IdEntity {
     private Integer id;
 
     @NotNull

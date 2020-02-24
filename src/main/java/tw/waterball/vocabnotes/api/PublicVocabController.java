@@ -116,25 +116,25 @@ public class PublicVocabController {
             return ResponseEntity.badRequest().body("You must not provide the WordGroup's id while creating it.");
         }
         return ResponseEntity.ok(publicVocabService.createWordGroup(wordGroup));
-    }
+}
 
-    @GetMapping("/word/{name}")
+    @GetMapping("/words/{name}")
     public Word getWord(@PathVariable String name) {
         return publicVocabService.getWord(name);
     }
 
-    @DeleteMapping("/word/{name}")
+    @DeleteMapping("/words/{name}")
     public void deleteWord(@PathVariable String name) {
         publicVocabService.deleteWord(name);
     }
 
-    @PatchMapping("/word/{name}")
+    @PatchMapping("/words/{name}")
     public void changeImageUrlOfWord(@PathVariable String name,
                                      @RequestBody String imageUrl) {
         publicVocabService.changeImageUrlOfWord(name, imageUrl);
     }
 
-    @PostMapping("/word")
+    @PostMapping("/words")
     public ResponseEntity createWord(@RequestBody @Valid Word word) {
         if (word.getId() != null) {
             return ResponseEntity.badRequest().body("You must not provide the Word's id while creating it.");
@@ -142,14 +142,14 @@ public class PublicVocabController {
         return ResponseEntity.ok(publicVocabService.createWord(word));
     }
 
-    @PutMapping("/word/{id}")
+    @PutMapping("/words/{id}")
     public void updateWord(@PathVariable int id,
                            @RequestBody @Valid Word word) {
         word.setId(id);
         publicVocabService.updateWord(word);
     }
 
-    @PostMapping("/wordgroup/{wordGroupId}/word/{wordName}")
+    @PostMapping("/wordgroup/{wordGroupId}/words/{wordName}")
     public void addWordIntoWordGroup(@PathVariable int wordGroupId,
                                      @PathVariable String wordName) {
         publicVocabService.addWordIntoWordGroup(wordName, wordGroupId);
@@ -161,7 +161,7 @@ public class PublicVocabController {
         publicVocabService.addWordGroupIntoDictionary(wordGroupId, dictionaryId);
     }
 
-    @DeleteMapping("/wordgroup/{wordGroupId}/word/{wordName}")
+    @DeleteMapping("/wordgroup/{wordGroupId}/words/{wordName}")
     public void removeWordFromWordGroup(@PathVariable int wordGroupId,
                                         @PathVariable String wordName) {
         publicVocabService.removeWordFromWordGroup(wordName, wordGroupId);
