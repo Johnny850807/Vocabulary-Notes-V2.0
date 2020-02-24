@@ -19,6 +19,7 @@ package tw.waterball.vocabnotes.models.entities;
 import com.sun.istack.NotNull;
 import com.sun.javafx.geom.transform.Identity;
 import lombok.*;
+import tw.waterball.vocabnotes.models.validation.annotations.UrlConstraint;
 import tw.waterball.vocabnotes.utils.RegexUtils;
 
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ public class Word implements IdEntity {
     private String synonyms = "";
 
     @NotNull
-    // TODO validate URL via Apache's UrlValidator
+    @UrlConstraint
     private String imageUrl;
 
     public void setSynonyms(List<String> synonyms) {

@@ -116,7 +116,7 @@ public class PublicVocabController {
             return ResponseEntity.badRequest().body("You must not provide the WordGroup's id while creating it.");
         }
         return ResponseEntity.ok(publicVocabService.createWordGroup(wordGroup));
-}
+    }
 
     @GetMapping("/words/{name}")
     public Word getWord(@PathVariable String name) {

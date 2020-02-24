@@ -14,31 +14,25 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.utils;
+package tw.waterball.vocabnotes.models.validation.annotations;
 
+import tw.waterball.vocabnotes.models.validation.validators.UrlConstraintValidator;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.Set;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public class BeanValidations {
-    private static Validator validator;
+@Documented
+@Constraint(validatedBy = UrlConstraintValidator.class)
+@Target( { ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UrlConstraint {
+    String message() default "The url is not valid.";
 
-    public static Set<ConstraintViolation<Object>> validate(Object object) {
-        if (validator == null) {
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            validator = factory.getValidator();
-        }
-        return validator.validate(object);
-    }
+    Class<?>[] groups() default {};
 
-
-    public static boolean isValid(Object object) {
-        return validate(object).isEmpty();
-    }
+    Class<? extends Payload>[] payload() default {};
 }
