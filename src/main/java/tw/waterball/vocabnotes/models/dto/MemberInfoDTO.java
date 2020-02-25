@@ -14,25 +14,35 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.spring.config;
+package tw.waterball.vocabnotes.models.dto;
 
-import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
+import tw.waterball.vocabnotes.models.entities.Member;
+
+import javax.validation.constraints.*;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Configuration
-public class GsonConfig {
+@Data
+public class MemberInfoDTO implements MemberInfo {
+    @Size(min = 1, max=18)
+    private String firstName;
 
-    @Bean
-    public GsonBuilderCustomizer gsonBuilderCustomizer() {
-        return gsonBuilder -> {
-            gsonBuilder.addDeserializationExclusionStrategy(new GsonExclusionStrategies.Deserialization());
-            gsonBuilder.addSerializationExclusionStrategy(new GsonExclusionStrategies.Serialization());
-        };
-    }
+    @Size(min = 1, max=18)
+    private String lastName;
 
+    @Min(1) @Max(150)
+    private int age;
+
+    @Email
+    @Size(max=30)
+    private String email;
+
+    private int exp = 0;
+    private int level = 1;
+
+    @NotNull
+    private Member.Role role;
 
 }

@@ -17,13 +17,10 @@
 package tw.waterball.vocabnotes.models.entities;
 
 import com.sun.istack.NotNull;
-import com.sun.javafx.geom.transform.Identity;
 import lombok.*;
 import tw.waterball.vocabnotes.models.validation.annotations.UrlConstraint;
-import tw.waterball.vocabnotes.utils.RegexUtils;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 

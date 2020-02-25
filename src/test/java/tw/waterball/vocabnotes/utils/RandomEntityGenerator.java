@@ -16,6 +16,7 @@
 
 package tw.waterball.vocabnotes.utils;
 
+import tw.waterball.vocabnotes.models.Level;
 import tw.waterball.vocabnotes.models.entities.*;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 

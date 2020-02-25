@@ -16,8 +16,6 @@
 
 package tw.waterball.vocabnotes.it;
 
-import java.lang.reflect.Type;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.internal.Streams;
@@ -35,8 +33,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.api.PublicVocabController;
-import tw.waterball.vocabnotes.api.PublicVocabController.DictionaryPatch;
-import tw.waterball.vocabnotes.api.PublicVocabController.WordGroupPatch;
+import tw.waterball.vocabnotes.api.PublicVocabController.DictionaryPatchRequest;
+import tw.waterball.vocabnotes.api.Requests;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.IdEntity;
 import tw.waterball.vocabnotes.models.entities.Word;
@@ -49,6 +47,7 @@ import tw.waterball.vocabnotes.utils.functional.ExceptionalRunnable;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -203,10 +202,9 @@ public class PublicVocabControllerIT {
     }
 
     private void patchDictionary(Dictionary D) throws Exception {
-        patchEntity(new DictionaryPatch().title(PATCH_DICT_TITLE), "/dictionaries/{id}", D.getId());
+        patchEntity(new DictionaryPatchRequest().title(PATCH_DICT_TITLE), "/dictionaries/{id}", D.getId());
         D.setTitle(PATCH_DICT_TITLE);
-
-        patchEntity(new DictionaryPatch().description(PATCH_DICT_DESCRIPTION), "/dictionaries/{id}", D.getId());
+        patchEntity(new DictionaryPatchRequest().description(PATCH_DICT_DESCRIPTION), "/dictionaries/{id}", D.getId());
         D.setDescription(PATCH_DICT_DESCRIPTION);
     }
 
@@ -220,7 +218,7 @@ public class PublicVocabControllerIT {
             wg.setId(postEntityAndReturnId(wg, "/wordgroups"));
             assertMvcResultCorrect(getEntityResult("/wordgroups/{id}", wg.getId()), wg);
             if (wg.getTitle() != null) {
-                patchEntity(new WordGroupPatch(PATCH_WG_TITLE_PREFIX + wg.getTitle()),
+                patchEntity(new Requests.PatchWordGroup(PATCH_WG_TITLE_PREFIX + wg.getTitle()),
                         "/wordgroups/{id}", wg.getId());
                 wg.setTitle(PATCH_WG_TITLE_PREFIX + wg.getTitle());
                 assertMvcResultCorrect(getEntityResult("/wordgroups/{id}", wg.getId()), wg);

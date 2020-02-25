@@ -16,7 +16,12 @@
 
 package tw.waterball.vocabnotes.models.entities;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import tw.waterball.vocabnotes.models.Level;
+import tw.waterball.vocabnotes.models.dto.MemberInfo;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
@@ -31,7 +36,7 @@ import java.util.List;
 @ToString
 
 @Entity
-public class Member implements IdEntity {
+public class Member implements IdEntity, MemberInfo {
     private Integer id;
 
     @Size(min = 1, max=18)
@@ -44,7 +49,7 @@ public class Member implements IdEntity {
     private int age;
 
     @Email
-    @Size(min = 1, max=50)
+    @Size(max=30)
     private String email;
 
     @NotNull @NotBlank
@@ -76,7 +81,7 @@ public class Member implements IdEntity {
         this.role = role;
     }
 
-
+    @Override
     public void setExp(int exp) {
         this.exp = exp;
         this.level = Level.getLevelFromExp(exp).getNumber();

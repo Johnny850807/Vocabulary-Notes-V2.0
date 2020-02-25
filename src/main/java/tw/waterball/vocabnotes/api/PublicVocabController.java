@@ -16,9 +16,7 @@
 
 package tw.waterball.vocabnotes.api;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,14 +51,12 @@ public class PublicVocabController {
 
     @PatchMapping("/dictionaries/{id}")
     public void patchDictionary(@PathVariable int id,
-                                 @RequestBody @Valid DictionaryPatch dictionaryPatch) {
-        publicVocabService.modifyDictionary(id, dictionaryPatch.title, dictionaryPatch.description);
+                                 @RequestBody @Valid DictionaryPatchRequest patchRequest) {
+        publicVocabService.modifyDictionary(id, patchRequest.title, patchRequest.description);
     }
 
-    @Accessors(fluent = true) @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DictionaryPatch {
+    @Data @Accessors(fluent = true)
+    public static class DictionaryPatchRequest {
         @Size(min = 1, max = 80)
         public String title;
         @Size(min = 1, max = 300)
@@ -93,17 +89,11 @@ public class PublicVocabController {
 
     @PatchMapping("/wordgroups/{id}")
     public void patchWordGroup(@PathVariable int id,
-                                  @RequestBody @Valid WordGroupPatch wordGroupPatch) {
-        publicVocabService.patchWordGroup(id, wordGroupPatch.title);
+                                  @RequestBody @Valid Requests.PatchWordGroup patchRequest) {
+        publicVocabService.patchWordGroup(id, patchRequest.title);
     }
 
-    @Accessors(fluent = true) @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class WordGroupPatch {
-        @Size(min = 1, max = 50)
-        public String title;
-    }
+
 
     @DeleteMapping("/wordgroups/{id}")
     public void deleteWordGroup(@PathVariable int id) {

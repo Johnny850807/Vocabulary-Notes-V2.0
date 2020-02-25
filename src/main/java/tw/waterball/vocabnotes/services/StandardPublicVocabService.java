@@ -62,6 +62,7 @@ public class StandardPublicVocabService implements PublicVocabService {
                 .orElseThrow(() -> new PublicVocabNotFoundException(DICTIONARY, dictionaryId));
     }
 
+    //DTO Projection
     @Override
     public List<Dictionary> getDictionaries(@Nullable Integer offset, @Nullable Integer limit) {
         offset = offset == null ? 0 : offset;

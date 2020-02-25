@@ -14,25 +14,37 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.spring.config;
-
-import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+package tw.waterball.vocabnotes.models.dto;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Configuration
-public class GsonConfig {
+public interface MemberInfo {
+    String getFirstName();
 
-    @Bean
-    public GsonBuilderCustomizer gsonBuilderCustomizer() {
-        return gsonBuilder -> {
-            gsonBuilder.addDeserializationExclusionStrategy(new GsonExclusionStrategies.Deserialization());
-            gsonBuilder.addSerializationExclusionStrategy(new GsonExclusionStrategies.Serialization());
-        };
-    }
+    String getLastName();
 
+    int getAge();
 
+    String getEmail();
+
+    int getExp();
+
+    int getLevel();
+
+    tw.waterball.vocabnotes.models.entities.Member.Role getRole();
+
+    void setFirstName(String firstName);
+
+    void setLastName(String lastName);
+
+    void setAge(int age);
+
+    void setEmail(String email);
+
+    void setExp(int exp);
+
+    void setLevel(int level);
+
+    void setRole(tw.waterball.vocabnotes.models.entities.Member.Role role);
 }

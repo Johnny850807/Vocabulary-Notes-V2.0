@@ -34,7 +34,6 @@ public interface PublicVocabService {
     WordGroup getWordGroup(int wordGroupId);
     Word getWord(String wordName);
 
-
     Dictionary createDictionary(Dictionary dictionary);
 
     void modifyDictionary(int dictionaryId, @Nullable String title, @Nullable String description);

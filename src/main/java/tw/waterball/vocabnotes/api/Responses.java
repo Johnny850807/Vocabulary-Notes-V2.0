@@ -14,24 +14,22 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.spring.config;
+package tw.waterball.vocabnotes.api;
 
-import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Configuration
-public class GsonConfig {
+public final class Responses {
+    private Responses() { }
 
-    @Bean
-    public GsonBuilderCustomizer gsonBuilderCustomizer() {
-        return gsonBuilder -> {
-            gsonBuilder.addDeserializationExclusionStrategy(new GsonExclusionStrategies.Deserialization());
-            gsonBuilder.addSerializationExclusionStrategy(new GsonExclusionStrategies.Serialization());
-        };
+    @Data @AllArgsConstructor
+    public static class TokenResponse {
+        private String token;
+        private long expired;
+        private int memberId;
     }
 
 

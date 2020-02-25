@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.entities;
+package tw.waterball.vocabnotes.models;
 
 import lombok.Data;
 
