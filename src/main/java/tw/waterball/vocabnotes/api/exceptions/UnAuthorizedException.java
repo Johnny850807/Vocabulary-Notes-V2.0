@@ -23,22 +23,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author johnny850807@gmail.com (Waterball))
  */
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class UnAuthorizedException extends RuntimeException {
-    public UnAuthorizedException() { }
-
+public class UnAuthorizedException extends HttpStatusCodeException {
     public UnAuthorizedException(String message) {
-        super(message);
-    }
-
-    public UnAuthorizedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UnAuthorizedException(Throwable cause) {
-        super(cause);
-    }
-
-    public UnAuthorizedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(HttpStatus.UNAUTHORIZED, message);
     }
 }

@@ -81,6 +81,15 @@ public class Member implements IdEntity, MemberInfo {
         this.role = role;
     }
 
+    public Member(String firstName, String lastName, int age, String email, String password, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public void setExp(int exp) {
         this.exp = exp;

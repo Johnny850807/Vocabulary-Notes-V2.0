@@ -153,8 +153,7 @@ public class PublicVocabControllerIT {
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(publicVocabController)
-                .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(publicVocabController).build();
     }
 
     private final static MediaType APPLICATION_JSON_UTF8 = new MediaType(APPLICATION_JSON, StandardCharsets.UTF_8);
@@ -168,7 +167,7 @@ public class PublicVocabControllerIT {
     @Test
     public void integrationTest() throws Exception {
         List<List<ExceptionalRunnable>> deletionScenarioPermutation =
-                PermutationUtils.permutation(Arrays.asList(this::deletionTestCaseA, this::deletionTestCaseB, this::deletionTestCaseC));
+                Collections.singletonList(Arrays.asList(this::deletionTestCaseA, this::deletionTestCaseB, this::deletionTestCaseC));
 
         for (List<ExceptionalRunnable> deletionScenario : deletionScenarioPermutation) {
             runDeletionTestScenario(deletionScenario, false);

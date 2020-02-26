@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.WordGroupRepository;
+import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 
 import javax.transaction.Transactional;
 import java.util.Collections;

@@ -23,11 +23,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.MemberInfoDTO;
+import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Optional;
 
 /**
@@ -62,9 +61,28 @@ public final class Requests {
     @Data
     public static class RegisterMember {
         @Valid
-        private MemberInfoDTO member;
+        private CreateMember memberCreationInfo;
         @Valid
         private Credentials credentials;
+
+        public Member toMember() {
+            return new Member(memberCreationInfo.getFirstName(),
+                    memberCreationInfo.getLastName(), memberCreationInfo.getAge(),
+                    credentials.getEmail(), credentials.getPassword(),
+                    Member.Role.MEMBER);
+        }
+    }
+
+    @Data @AllArgsConstructor @NoArgsConstructor
+    public static class CreateMember {
+        @Size(min = 1, max=18)
+        private String firstName;
+
+        @Size(min = 1, max=18)
+        private String lastName;
+
+        @Min(1) @Max(150)
+        private int age;
     }
 
     @Data

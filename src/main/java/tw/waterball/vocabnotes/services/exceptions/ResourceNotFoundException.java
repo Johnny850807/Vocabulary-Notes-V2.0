@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.services;
+package tw.waterball.vocabnotes.services.exceptions;
 
-import tw.waterball.vocabnotes.api.exceptions.ForbiddenException;
+import tw.waterball.vocabnotes.api.exceptions.NotFoundException;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public class DictionaryNotOwnException extends ForbiddenException {
-    public DictionaryNotOwnException(int memberId, int dictionaryId) {
-        super(String.format("The memberCreationInfo whose id = %d does not own the dictionary whose id = %d.",
-                memberId, dictionaryId));
+public class ResourceNotFoundException extends NotFoundException {
+    public ResourceNotFoundException(String resourceName, Object identifier) {
+        super(String.format("The public resource %s with primary key %s not found."
+        , resourceName, identifier));
     }
 }

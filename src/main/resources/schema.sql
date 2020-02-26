@@ -29,7 +29,7 @@ CREATE TABLE member
   password   VARCHAR(128) NOT NULL,
   exp        INTEGER                  DEFAULT 0,
   level      INTEGER                  DEFAULT 1,
-  role       ENUM ('MEMBER', 'ADMIN') DEFAULT 'member'
+  role       ENUM ('MEMBER', 'ADMIN') DEFAULT 'memberCreationInfo'
 );
 
 CREATE TABLE dictionary

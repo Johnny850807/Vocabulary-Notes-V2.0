@@ -14,16 +14,21 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.services;
+package tw.waterball.vocabnotes.services.exceptions;
 
-import tw.waterball.vocabnotes.api.exceptions.ForbiddenException;
+import tw.waterball.vocabnotes.api.exceptions.UnAuthorizedException;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public class DictionaryNotOwnException extends ForbiddenException {
-    public DictionaryNotOwnException(int memberId, int dictionaryId) {
-        super(String.format("The memberCreationInfo whose id = %d does not own the dictionary whose id = %d.",
-                memberId, dictionaryId));
+public class PasswordNotCorrectException extends UnAuthorizedException {
+    private String password;
+    public PasswordNotCorrectException(String password) {
+        super("The password " + password + " is not correct.");
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

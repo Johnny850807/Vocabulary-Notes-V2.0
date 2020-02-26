@@ -30,18 +30,11 @@ public interface DictionaryService {
 
     DictionaryDTO createPublicDictionary(Requests.CreateDictionary request);
 
-    DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request);
-
     DictionaryDTO getDictionary(int dictionaryId);
-
-    List<DictionaryDTO> getOwnDictionaries(int memberId, Integer offset, Integer limit);
 
     List<DictionaryDTO> getPublicDictionaries(Integer offset, Integer limit);
 
-
     void deletePublicDictionary(int dictionaryId);
-
-    void deleteOwnDictionary(int memberId, int dictionaryId);
 
     void removeWordGroupFromDictionary(int wordGroupId, int dictionaryId);
 

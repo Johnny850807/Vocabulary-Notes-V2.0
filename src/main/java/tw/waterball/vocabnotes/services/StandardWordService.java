@@ -20,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.api.exceptions.BadRequestException;
 import tw.waterball.vocabnotes.models.entities.Word;
-import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.WordRepository;
+import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 import tw.waterball.vocabnotes.utils.RegexUtils;
 
 import javax.transaction.Transactional;

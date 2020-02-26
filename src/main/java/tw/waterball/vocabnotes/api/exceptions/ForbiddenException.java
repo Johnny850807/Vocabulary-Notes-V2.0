@@ -23,23 +23,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author johnny850807@gmail.com (Waterball))
  */
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class ForbiddenException extends RuntimeException {
-    public ForbiddenException() {
-    }
+public class ForbiddenException extends HttpStatusCodeException {
 
     public ForbiddenException(String message) {
-        super(message);
-    }
-
-    public ForbiddenException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ForbiddenException(Throwable cause) {
-        super(cause);
-    }
-
-    public ForbiddenException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(HttpStatus.FORBIDDEN, message);
     }
 }

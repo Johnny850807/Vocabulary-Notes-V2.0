@@ -21,9 +21,9 @@ import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.api.Requests;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
-import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.DictionaryRepository;
+import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -65,32 +65,13 @@ public class StandardDictionaryService implements DictionaryService {
         return DictionaryDTO.project(dict);
     }
 
-    @Override
-    public DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request) {
-        Member owner = memberService.getMember(ownerId);
-        Dictionary dict = dictionaryRepository.save(Dictionary.builder()
-                .owner(owner)
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .type(Dictionary.Type.OWN).build());
-        return DictionaryDTO.project(dict);
-    }
+
 
     @Override
     public DictionaryDTO getDictionary(int dictionaryId) {
         return DictionaryDTO.project(findDictionaryOrThrowNotFound(dictionaryId));
     }
 
-    @Override
-    @SuppressWarnings("Duplicates")
-    public List<DictionaryDTO> getOwnDictionaries(int memberId, Integer offset, Integer limit) {
-        offset = offset == null ? 0 : offset;
-        limit = limit == null ? Integer.MAX_VALUE : limit;
-        if (0 == limit) {
-            return Collections.emptyList();
-        }
-        return dictionaryRepository.findOwnDictionaries(memberId, offset, limit);
-    }
 
     @Override
     @SuppressWarnings("Duplicates")
@@ -109,17 +90,6 @@ public class StandardDictionaryService implements DictionaryService {
         dictionaryRepository.deleteById(dictionaryId);
     }
 
-    @Override
-    public void deleteOwnDictionary(int memberId, int dictionaryId) {
-        validateMemberOwnDictionary(memberId, dictionaryId);
-        dictionaryRepository.deleteById(dictionaryId);
-    }
-
-    private void validateMemberOwnDictionary(int memberId, int dictionaryId) {
-        if (!dictionaryRepository.existsByOwnerId(memberId)) {
-            throw new DictionaryNotOwnException(memberId, dictionaryId);
-        }
-    }
 
     @Override
     public void removeWordGroupFromDictionary(int wordGroupId, int dictionaryId) {

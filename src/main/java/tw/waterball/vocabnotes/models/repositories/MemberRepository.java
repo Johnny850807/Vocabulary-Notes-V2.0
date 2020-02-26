@@ -16,13 +16,18 @@
 
 package tw.waterball.vocabnotes.models.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import tw.waterball.vocabnotes.models.entities.Member;
+
+import java.util.Optional;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 @Repository
-public interface MemberRepository extends CrudRepository<Member, Integer> {
+public interface MemberRepository extends JpaRepository<Member, Integer> {
+    boolean existsByEmail(String email);
+    Optional<Member> findByEmail(String email);
 }

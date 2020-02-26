@@ -19,21 +19,39 @@ package tw.waterball.vocabnotes.services;
 import tw.waterball.vocabnotes.api.Requests;
 import tw.waterball.vocabnotes.api.Responses;
 import tw.waterball.vocabnotes.models.dto.Credentials;
+import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.dto.MemberInfo;
 import tw.waterball.vocabnotes.models.entities.Member;
+import tw.waterball.vocabnotes.services.exceptions.DuplicateEmailException;
+import tw.waterball.vocabnotes.services.exceptions.EmailNotFoundException;
+import tw.waterball.vocabnotes.services.exceptions.PasswordNotCorrectException;
+
+import java.util.List;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 public interface MemberService {
 
-    Responses.TokenResponse createToken(Credentials credentials);
+    Responses.TokenResponse login(Credentials credentials) throws EmailNotFoundException, PasswordNotCorrectException;
 
-    Responses.TokenResponse renewToken(int memberId);
+    Responses.TokenResponse renewToken(String token);
 
     Member getMember(int memberId);
 
-    MemberInfo createMember(Credentials credentials, MemberInfo member);
+    MemberInfo createMember(Requests.RegisterMember request) throws DuplicateEmailException;
 
     void updateMember(int memberId, Requests.UpdateMember request);
+
+    void favoriteDictionary(int memberId, int dictionaryId);
+
+    void deleteOwnDictionary(int memberId, int dictionaryId);
+
+    List<DictionaryDTO> getOwnDictionaries(int memberId, Integer offset, Integer limit);
+
+    DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request);
+
+    void referenceWordGroup(int memberId, int dictionaryId, int wordGroupId);
+
+    void removeWordGroupReference(int memberId, int dictionaryId, int wordGroupId);
 }

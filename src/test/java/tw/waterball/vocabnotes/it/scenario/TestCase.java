@@ -14,16 +14,19 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.services;
+package tw.waterball.vocabnotes.it.scenario;
 
-import tw.waterball.vocabnotes.api.exceptions.ForbiddenException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public class DictionaryNotOwnException extends ForbiddenException {
-    public DictionaryNotOwnException(int memberId, int dictionaryId) {
-        super(String.format("The memberCreationInfo whose id = %d does not own the dictionary whose id = %d.",
-                memberId, dictionaryId));
-    }
+@Getter @Setter @AllArgsConstructor
+public class TestCase {
+    private String name;
+    private final Runnable runnable;
+
+
 }

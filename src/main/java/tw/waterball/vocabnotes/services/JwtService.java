@@ -28,30 +28,30 @@ import java.util.Map;
  * @author johnny850807@gmail.com (Waterball))
  */
 public interface JwtService {
-    String getJwt(JwtParams jwtParams);
+    Date getDefaultExpirationTime();
+    String getJwt(Claim claim);
+    JwtToken parse(String token);
 
     @Data @AllArgsConstructor
-    class JwtParams {
-        private Date expiration;
+    class JwtToken {
+        private Date expirationDate;
         private Claim claim;
+    }
 
-        @Data @AllArgsConstructor
-        public static class Claim {
-            private final static String MEMBER_ID = "memberId";
-            private final static String ROLE = "role";
-            private Member.Role role;
-            private int memberId;
 
-            public Map<String, String> getClaimMap() {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(JwtParams.Claim.MEMBER_ID, String.valueOf(memberId));
-                map.put(Claim.ROLE, role.toString());
-                return map;
-            }
-        }
+    @Data @AllArgsConstructor
+    class Claim {
+        private final static String MEMBER_ID = "memberId";
+        private final static String ROLE = "role";
+        private Member.Role role;
+        private int memberId;
 
         public Map<String, String> getClaimMap() {
-            return claim.getClaimMap();
+            HashMap<String, String> map = new HashMap<>();
+            map.put(Claim.MEMBER_ID, String.valueOf(memberId));
+            map.put(Claim.ROLE, role.toString());
+            return map;
         }
     }
+
 }

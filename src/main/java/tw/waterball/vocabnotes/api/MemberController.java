@@ -46,17 +46,17 @@ public class MemberController {
 
     @PostMapping("/tokens")
     public Responses.TokenResponse createToken(@RequestBody @Valid Credentials credentials) {
-        return memberService.createToken(credentials);
+        return memberService.login(credentials);
     }
 
-    @PostMapping("/{memberId}/tokens")
-    public Responses.TokenResponse renewToken(@PathVariable int memberId) {
-        return memberService.renewToken(memberId);
+    @PostMapping("/tokens/refresh")
+    public Responses.TokenResponse renewToken(@RequestBody String token) {
+        return memberService.renewToken(token);
     }
 
     @PostMapping
     public MemberInfo createMember(@RequestBody @Valid Requests.RegisterMember request) {
-        return memberService.createMember(request.getCredentials(), request.getMember());
+        return memberService.createMember(request);
     }
 
     @GetMapping("/{memberId}")
@@ -75,12 +75,12 @@ public class MemberController {
     public List<DictionaryDTO> getOwnDictionaries(@PathVariable int memberId,
                                                   @RequestParam(required = false) Integer offset,
                                                   @RequestParam(required = false) Integer limit) {
-        return dictionaryService.getOwnDictionaries(memberId, offset, limit);
+        return memberService.getOwnDictionaries(memberId, offset, limit);
     }
 
     @PostMapping("/{memberId}/own/dictionaries")
     public DictionaryDTO createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.CreateDictionary request) {
-        return dictionaryService.createOwnDictionary(memberId, request);
+        return memberService.createOwnDictionary(memberId, request);
     }
 
     /**
@@ -96,32 +96,27 @@ public class MemberController {
     @DeleteMapping("/{memberId}/own/dictionaries/{dictionaryId}")
     public void deleteOwnDictionary(@PathVariable int memberId,
                                                      @PathVariable int dictionaryId) {
-        dictionaryService.deleteOwnDictionary(memberId, dictionaryId);
+        memberService.deleteOwnDictionary(memberId, dictionaryId);
     }
 
-    @PostMapping("/{memberId}/public/dictionaries/{dictionaryId}/favorite")
-    public void favoritePublicDictionary(@PathVariable int memberId,
+    @PostMapping("/{memberId}/dictionaries/{dictionaryId}/favorite")
+    public void favoriteDictionary(@PathVariable int memberId,
                                          @PathVariable int dictionaryId) {
-
+        memberService.favoriteDictionary(memberId, dictionaryId);
     }
 
-    @PostMapping("/{memberId}/public/wordgroups/{wgId}")
+    @PostMapping("{memberId}/own/dictionaries/{dictionaryId}/public/wordgroups/{wordGroupId}")
     public void referenceWordGroup(@PathVariable int memberId,
-                                   @PathVariable int wgId) {
-
+                                   @PathVariable int dictionaryId,
+                                   @PathVariable int wordGroupId) {
+        memberService.referenceWordGroup(memberId, dictionaryId, wordGroupId);
     }
 
-    @DeleteMapping("/{memberId}/public/wordgroups/{wgId}")
+    @DeleteMapping("{memberId}/own/dictionaries/{dictionaryId}/public/wordgroups/{wordGroupId}")
     public void removeWordGroupReference(@PathVariable int memberId,
-                                         @PathVariable int wgId) {
-
-    }
-
-    @GetMapping("/{memberId}/own/dictionaries/wordgroups")
-    public List<WordGroup> getWordGroupsFromOwnDictionary(@PathVariable int memberId,
-                                                          @RequestParam(required = false) Integer limit,
-                                                          @RequestParam(required = false) Integer offset) {
-        return null;
+                                         @PathVariable int dictionaryId,
+                                         @PathVariable int wordGroupId) {
+        memberService.removeWordGroupReference(memberId, dictionaryId, wordGroupId);
     }
 
 }

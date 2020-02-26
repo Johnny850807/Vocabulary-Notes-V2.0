@@ -18,16 +18,9 @@ package tw.waterball.vocabnotes.models.repositories;
 
 import org.springframework.stereotype.Repository;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
-import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
