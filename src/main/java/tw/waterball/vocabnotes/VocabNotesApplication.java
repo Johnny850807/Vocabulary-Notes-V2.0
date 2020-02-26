@@ -25,14 +25,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author johnny850807@gmail.com (Waterball))
  */
 @EnableJpaRepositories
-@EnableTransactionManagement
 @SpringBootApplication
 public class VocabNotesApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VocabNotesApplication.class, args);
 	}
-
 
 
 }
