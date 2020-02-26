@@ -14,20 +14,11 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.repositories;
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
+package tw.waterball.vocabnotes.utils.functional;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Repository
-public interface DictionaryRepository extends CrudRepository<Dictionary, Integer>, PagingDictionaryRepository {
-
-    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
-            "FROM Dictionary d WHERE d.owner.id = :ownerId")
-    boolean existsByOwnerId(int ownerId);
+public interface TriConsumer<A, B, C> {
+    void accept(A a, B b, C c);
 }

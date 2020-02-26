@@ -16,18 +16,17 @@
 
 package tw.waterball.vocabnotes.api;
 
-import lombok.*;
-import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
+import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
-import tw.waterball.vocabnotes.services.PublicVocabService;
+import tw.waterball.vocabnotes.services.DictionaryService;
+import tw.waterball.vocabnotes.services.WordGroupService;
+import tw.waterball.vocabnotes.services.WordService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -36,68 +35,60 @@ import java.util.List;
 @RequestMapping("/api/public")
 @RestController
 public class PublicVocabController {
-
-    private final PublicVocabService publicVocabService;
+    private final DictionaryService dictionaryService;
+    private final WordGroupService wordGroupService;
+    private final WordService wordService;
 
     @Autowired
-    public PublicVocabController(PublicVocabService publicVocabService) {
-        this.publicVocabService = publicVocabService;
+    public PublicVocabController(DictionaryService dictionaryService,
+                                 WordGroupService wordGroupService,
+                                 WordService wordService) {
+        this.dictionaryService = dictionaryService;
+        this.wordGroupService = wordGroupService;
+        this.wordService = wordService;
     }
 
     @GetMapping("/dictionaries/{id}")
-    public Dictionary getDictionary(@PathVariable int id) {
-        return publicVocabService.getDictionary(id);
+    public DictionaryDTO getDictionary(@PathVariable int id) {
+        return dictionaryService.getDictionary(id);
     }
 
     @PatchMapping("/dictionaries/{id}")
     public void patchDictionary(@PathVariable int id,
-                                 @RequestBody @Valid DictionaryPatchRequest patchRequest) {
-        publicVocabService.modifyDictionary(id, patchRequest.title, patchRequest.description);
-    }
-
-    @Data @Accessors(fluent = true)
-    public static class DictionaryPatchRequest {
-        @Size(min = 1, max = 80)
-        public String title;
-        @Size(min = 1, max = 300)
-        public String description;
+                                 @RequestBody @Valid Requests.ModifyDictionary request) {
+        dictionaryService.modifyDictionary(id, request);
     }
 
     @DeleteMapping("/dictionaries/{id}")
     public void deleteDictionary(@PathVariable int id) {
-        publicVocabService.deleteDictionary(id);
+        dictionaryService.deletePublicDictionary(id);
     }
 
     @GetMapping("/dictionaries")
-    public List<Dictionary> getDictionaries(@RequestParam(required = false) Integer limit,
-                                            @RequestParam(required = false) Integer offset) {
-        return publicVocabService.getDictionaries(offset, limit);
+    public List<DictionaryDTO> getDictionaries(@RequestParam(required = false) Integer offset,
+                                            @RequestParam(required = false) Integer limit) {
+        return dictionaryService.getPublicDictionaries(offset, limit);
     }
 
     @PostMapping("/dictionaries")
-    public ResponseEntity createDictionary(@RequestBody @Valid Dictionary dictionary) {
-        if (dictionary.getId() != null) {
-            return ResponseEntity.badRequest().body("You must not provide the Dictionary's id while creating it.");
-        }
-        return ResponseEntity.ok(publicVocabService.createDictionary(dictionary));
+    public ResponseEntity createDictionary(@RequestBody @Valid Requests.CreateDictionary request) {
+        return ResponseEntity.ok(dictionaryService.createPublicDictionary(request));
     }
 
     @GetMapping("/wordgroups/{id}")
     public WordGroup getWordGroup(@PathVariable int id) {
-        return publicVocabService.getWordGroup(id);
+        return wordGroupService.getWordGroup(id);
     }
 
     @PatchMapping("/wordgroups/{id}")
     public void patchWordGroup(@PathVariable int id,
-                                  @RequestBody @Valid Requests.PatchWordGroup patchRequest) {
-        publicVocabService.patchWordGroup(id, patchRequest.title);
+                                  @RequestBody @Valid Requests.ModifyWordGroup request) {
+        wordGroupService.patchWordGroup(id, request.getTitle());
     }
-
-
 
     @DeleteMapping("/wordgroups/{id}")
     public void deleteWordGroup(@PathVariable int id) {
-        publicVocabService.deleteWordGroup(id);
+        wordGroupService.deleteWordGroup(id);
     }
 
     @PostMapping("/wordgroups")
@@ -105,23 +96,23 @@ public class PublicVocabController {
         if (wordGroup.getId() != null) {
             return ResponseEntity.badRequest().body("You must not provide the WordGroup's id while creating it.");
         }
-        return ResponseEntity.ok(publicVocabService.createWordGroup(wordGroup));
+        return ResponseEntity.ok(wordGroupService.createWordGroup(wordGroup));
     }
 
     @GetMapping("/words/{name}")
     public Word getWord(@PathVariable String name) {
-        return publicVocabService.getWord(name);
+        return wordService.getWord(name);
     }
 
     @DeleteMapping("/words/{name}")
     public void deleteWord(@PathVariable String name) {
-        publicVocabService.deleteWord(name);
+        wordService.deleteWord(name);
     }
 
     @PatchMapping("/words/{name}")
     public void changeImageUrlOfWord(@PathVariable String name,
                                      @RequestBody String imageUrl) {
-        publicVocabService.changeImageUrlOfWord(name, imageUrl);
+        wordService.changeImageUrlOfWord(name, imageUrl);
     }
 
     @PostMapping("/words")
@@ -129,45 +120,44 @@ public class PublicVocabController {
         if (word.getId() != null) {
             return ResponseEntity.badRequest().body("You must not provide the Word's id while creating it.");
         }
-        return ResponseEntity.ok(publicVocabService.createWord(word));
+        return ResponseEntity.ok(wordService.createWord(word));
     }
 
     @PutMapping("/words/{id}")
     public void updateWord(@PathVariable int id,
                            @RequestBody @Valid Word word) {
         word.setId(id);
-        publicVocabService.updateWord(word);
+        wordService.updateWord(word);
     }
 
     @PostMapping("/wordgroups/{wordGroupId}/words/{wordName}")
     public void addWordIntoWordGroup(@PathVariable int wordGroupId,
                                      @PathVariable String wordName) {
-        publicVocabService.addWordIntoWordGroup(wordName, wordGroupId);
+        wordGroupService.addWordIntoWordGroup(wordName, wordGroupId);
     }
 
     @PostMapping("/dictionaries/{dictionaryId}/wordgroups/{wordGroupId}")
     public void addWordGroupIntoDictionary(@PathVariable int dictionaryId,
                                            @PathVariable int wordGroupId) {
-        publicVocabService.addWordGroupIntoDictionary(wordGroupId, dictionaryId);
+        dictionaryService.addWordGroupIntoDictionary(wordGroupId, dictionaryId);
     }
 
     @DeleteMapping("/wordgroups/{wordGroupId}/words/{wordName}")
     public void removeWordFromWordGroup(@PathVariable int wordGroupId,
                                         @PathVariable String wordName) {
-        publicVocabService.removeWordFromWordGroup(wordName, wordGroupId);
+        wordGroupService.removeWordFromWordGroup(wordName, wordGroupId);
     }
 
     @DeleteMapping("/dictionaries/{dictionaryId}/wordgroups/{wordGroupId}")
     public void removeWordGroupFromDictionary(@PathVariable int dictionaryId,
                                               @PathVariable int wordGroupId) {
-        publicVocabService.removeWordGroupFromDictionary(wordGroupId, dictionaryId);
+        dictionaryService.removeWordGroupFromDictionary(wordGroupId, dictionaryId);
     }
 
     @GetMapping("/dictionaries/{dictionaryId}/wordgroups")
     public List<WordGroup> getWordGroups(@PathVariable int dictionaryId,
                                          @RequestParam(required = false) Integer offset,
                                          @RequestParam(required = false) Integer limit) {
-        return publicVocabService.getWordGroups(dictionaryId, offset, limit);
+        return wordGroupService.getWordGroups(dictionaryId, offset, limit);
     }
-
 }

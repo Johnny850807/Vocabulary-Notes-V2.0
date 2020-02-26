@@ -27,9 +27,16 @@ import tw.waterball.vocabnotes.models.entities.Dictionary;
 @Data
 @AllArgsConstructor
 public class DictionaryDTO {
-    private int id;
+    private Integer id;
     private String title;
     private String description;
-    private int ownerId;
+    private Integer ownerId;
     private Dictionary.Type type;
+
+    public static DictionaryDTO project(Dictionary dictionary) {
+        return new DictionaryDTO(dictionary.getId(), dictionary.getTitle(),
+                dictionary.getDescription(),
+                dictionary.getOwner() == null ? null : dictionary.getOwner().getId(),
+                dictionary.getType());
+    }
 }

@@ -53,7 +53,7 @@ public class JpaConfig {
     public DataSource embeddedDatabase() {
         return new EmbeddedDatabaseBuilder()
                 .addScript("schema.sql")
-                .addScript("data.sql")
+                .addScript("stub.sql")
                 .setType(EmbeddedDatabaseType.H2)
                 .build();
     }

@@ -16,14 +16,14 @@
 
 package tw.waterball.vocabnotes.services;
 
-import tw.waterball.vocabnotes.api.exceptions.NotFoundException;
+import tw.waterball.vocabnotes.api.exceptions.ForbiddenException;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public class PublicVocabNotFoundException extends NotFoundException {
-    public PublicVocabNotFoundException(String resourceName, Object identifier) {
-        super(String.format("The public resource %s with primary key %s not found."
-        , resourceName, identifier));
+public class DictionaryNotOwnException extends ForbiddenException {
+    public DictionaryNotOwnException(int memberId, int dictionaryId) {
+        super(String.format("The member whose id = %d does not own the dictionary whose id = %d.",
+                memberId, dictionaryId));
     }
 }

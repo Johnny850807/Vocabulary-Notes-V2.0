@@ -18,6 +18,7 @@ package tw.waterball.vocabnotes.models.repositories;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
@@ -32,8 +33,9 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Sql(scripts = {"classpath:clear.sql", "classpath:data.sql"}, executionPhase = BEFORE_TEST_METHOD)
 @SuppressWarnings("OptionalGetWithoutIsPresent")
+@Sql(scripts = {"classpath:clear.sql", "classpath:stub.sql"}, executionPhase = BEFORE_TEST_METHOD)
+@DataJpaTest
 class RepositoryTest extends BaseSpringTest {
 
     @Autowired

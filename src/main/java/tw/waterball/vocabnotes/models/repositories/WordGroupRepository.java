@@ -26,6 +26,6 @@ import tw.waterball.vocabnotes.models.entities.WordGroup;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Repository
-public interface WordGroupRepository extends CrudRepository<WordGroup, Integer> {
+public interface WordGroupRepository extends CrudRepository<WordGroup, Integer>, PagingWordGroupRepository {
 
 }

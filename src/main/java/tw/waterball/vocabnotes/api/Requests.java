@@ -16,9 +16,11 @@
 
 package tw.waterball.vocabnotes.api;
 
-import jdk.nashorn.internal.ir.RuntimeNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.MemberInfoDTO;
 
@@ -26,6 +28,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.util.Optional;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
@@ -35,9 +38,25 @@ public final class Requests {
 
     @Data
     @AllArgsConstructor
-    public static class PostDictionary {
+    public static class CreateDictionary {
         private String title;
         private String description;
+    }
+
+    @AllArgsConstructor @NoArgsConstructor
+    @Setter @Accessors(fluent = true)
+    public static class ModifyDictionary {
+        @Size(min = 1, max = 80)
+        private String title;
+        @Size(min = 1, max = 300)
+        private String description;
+
+        public Optional<String> getTitle() {
+            return Optional.ofNullable(title);
+        }
+        public Optional<String> getDescription() {
+            return Optional.ofNullable(description);
+        }
     }
 
     @Data
@@ -49,7 +68,7 @@ public final class Requests {
     }
 
     @Data
-    public static class PutMember {
+    public static class UpdateMember {
         @Size(min = 1, max = 18)
         private String firstName;
         @Size(min = 1, max = 18)
@@ -59,8 +78,8 @@ public final class Requests {
     }
 
     @Data @AllArgsConstructor
-    public static class PatchWordGroup {
+    public static class ModifyWordGroup {
         @Size(min = 1, max = 50)
-        public String title;
+        private String title;
     }
 }

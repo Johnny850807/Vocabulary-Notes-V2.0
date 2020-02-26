@@ -19,6 +19,7 @@ package tw.waterball.vocabnotes.services;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import java.security.Key;
@@ -29,6 +30,7 @@ import java.util.ResourceBundle;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
+@Component
 public class StandardJwtService implements JwtService {
 
     @Override

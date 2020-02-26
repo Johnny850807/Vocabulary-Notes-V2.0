@@ -53,7 +53,7 @@ public class Dictionary implements IdEntity {
     private Type type;
 
     @Singular
-    private transient Set<WordGroup> wordGroups = new HashSet<>();
+    private Set<WordGroup> wordGroups = new HashSet<>();
 
 
     public void addWordGroup(WordGroup wordGroup) {

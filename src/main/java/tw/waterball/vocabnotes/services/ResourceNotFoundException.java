@@ -14,20 +14,16 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.repositories;
+package tw.waterball.vocabnotes.services;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
+import tw.waterball.vocabnotes.api.exceptions.NotFoundException;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Repository
-public interface DictionaryRepository extends CrudRepository<Dictionary, Integer>, PagingDictionaryRepository {
-
-    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
-            "FROM Dictionary d WHERE d.owner.id = :ownerId")
-    boolean existsByOwnerId(int ownerId);
+public class ResourceNotFoundException extends NotFoundException {
+    public ResourceNotFoundException(String resourceName, Object identifier) {
+        super(String.format("The public resource %s with primary key %s not found."
+        , resourceName, identifier));
+    }
 }

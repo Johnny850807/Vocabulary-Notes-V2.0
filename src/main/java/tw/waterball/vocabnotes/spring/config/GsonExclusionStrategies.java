@@ -24,6 +24,7 @@ import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 /**
+ * TODO non-type-safe exclusion over attributes, is there any better practice to config Gson not using annotation?
  * @author johnny850807@gmail.com (Waterball))
  */
 public class GsonExclusionStrategies {
@@ -33,9 +34,13 @@ public class GsonExclusionStrategies {
         @Override
         public boolean shouldSkipField(FieldAttributes fieldAttributes) {
             boolean shouldSkip = false;
-            if (Member.class == fieldAttributes.getDeclaringClass()) {
-                shouldSkip = Member.Role.class == fieldAttributes.getDeclaredClass() ||
+            Class<?> clazzType = fieldAttributes.getDeclaringClass();
+            Class<?> attrType = fieldAttributes.getDeclaredClass();
+            if (Member.class == attrType) {
+                shouldSkip = Member.Role.class == clazzType ||
                         "password".equals(fieldAttributes.getName());
+            } else if (Dictionary.class == attrType) {
+                shouldSkip = "wordGroups".equals(fieldAttributes.getName());
             }
 
             if (shouldSkip) {
@@ -54,8 +59,11 @@ public class GsonExclusionStrategies {
         @Override
         public boolean shouldSkipField(FieldAttributes fieldAttributes) {
             boolean shouldSkip = false;
-            if (Dictionary.class == fieldAttributes.getDeclaringClass()) {
-                shouldSkip = Member.class == fieldAttributes.getDeclaredClass();
+            Class<?> clazzType = fieldAttributes.getDeclaringClass();
+            Class<?> attrType = fieldAttributes.getDeclaredClass();
+
+            if (Dictionary.class == clazzType) {
+                shouldSkip = Member.class == attrType;
             }
 
             if (shouldSkip) {

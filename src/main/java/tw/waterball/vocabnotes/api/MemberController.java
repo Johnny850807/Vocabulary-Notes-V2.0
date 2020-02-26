@@ -16,12 +16,15 @@
 
 package tw.waterball.vocabnotes.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.dto.MemberInfo;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
+import tw.waterball.vocabnotes.services.DictionaryService;
+import tw.waterball.vocabnotes.services.MemberService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,31 +35,39 @@ import java.util.List;
 @RequestMapping("/api/members")
 @RestController
 public class MemberController {
+    private MemberService memberService;
+    private DictionaryService dictionaryService;
+
+    @Autowired
+    public MemberController(MemberService memberService, DictionaryService dictionaryService) {
+        this.memberService = memberService;
+        this.dictionaryService = dictionaryService;
+    }
 
     @PostMapping("/tokens")
     public Responses.TokenResponse createToken(@RequestBody @Valid Credentials credentials) {
-        return null;
+        return memberService.createToken(credentials);
     }
 
     @PostMapping("/{memberId}/tokens")
     public Responses.TokenResponse renewToken(@PathVariable int memberId) {
-        return null;
+        return memberService.renewToken(memberId);
     }
 
     @PostMapping
     public MemberInfo createMember(@RequestBody @Valid Requests.RegisterMember request) {
-        return null;
+        return memberService.createMember(request.getCredentials(), request.getMember());
     }
 
     @GetMapping("/{memberId}")
     public Member getMember(@PathVariable int memberId) {
-        return null;
+        return memberService.getMember(memberId);
     }
 
     @PutMapping("/{memberId}")
     public void updateMember(@PathVariable int memberId,
-                             @RequestBody @Valid Requests.PutMember request) {
-
+                             @RequestBody @Valid Requests.UpdateMember request) {
+        memberService.updateMember(memberId, request);
     }
 
 
@@ -64,25 +75,28 @@ public class MemberController {
     public List<DictionaryDTO> getOwnDictionaries(@PathVariable int memberId,
                                                   @RequestParam(required = false) Integer offset,
                                                   @RequestParam(required = false) Integer limit) {
-        return null;
+        return dictionaryService.getOwnDictionaries(memberId, offset, limit);
     }
 
     @PostMapping("/{memberId}/own/dictionaries")
-    public void createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.PostDictionary request) {
-
+    public DictionaryDTO createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.CreateDictionary request) {
+        return dictionaryService.createOwnDictionary(memberId, request);
     }
 
+    /**
+     * This api is equivalent to /api/dictionaries/{dictionaryId}
+     */
     @GetMapping("/{memberId}/own/dictionaries/{dictionaryId}")
-    public List<DictionaryDTO> getOwnDictionaries(@PathVariable int memberId,
+    public DictionaryDTO getOwnDictionary(@PathVariable int memberId,
                                                   @PathVariable int dictionaryId) {
-        return null;
+        return dictionaryService.getDictionary(dictionaryId);
     }
 
 
     @DeleteMapping("/{memberId}/own/dictionaries/{dictionaryId}")
-    public List<DictionaryDTO> deleteOwnDictionaries(@PathVariable int memberId,
+    public void deleteOwnDictionary(@PathVariable int memberId,
                                                      @PathVariable int dictionaryId) {
-        return null;
+        dictionaryService.deleteOwnDictionary(memberId, dictionaryId);
     }
 
     @PostMapping("/{memberId}/public/dictionaries/{dictionaryId}/favorite")
