@@ -16,15 +16,30 @@
 
 package tw.waterball.vocabnotes.models.repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
-import tw.waterball.vocabnotes.models.entities.WordGroup;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 @Repository
-public interface WordGroupRepository extends
-        CrudRepository<WordGroup, Integer>, PagingWordGroupRepository, CascadeWordGroupDeletion {
+public class CascadeDictionaryDeletionImpl implements CascadeDictionaryDeletion {
+    @PersistenceContext
+    private EntityManager em;
 
+    @Modifying
+    @Override
+    public void deleteById(int dictionaryId) {
+        em.createNativeQuery("DELETE FROM dictionary_wordgroup WHERE dictionary_id = ?1")
+                .setParameter(1, dictionaryId).executeUpdate();
+
+        em.createNativeQuery("DELETE FROM member_favorite_dictionary WHERE dictionary_id = ?1")
+                .setParameter(1, dictionaryId).executeUpdate();
+
+        em.createNativeQuery("DELETE FROM dictionary WHERE id = ?1")
+                .setParameter(1, dictionaryId).executeUpdate();
+    }
 }

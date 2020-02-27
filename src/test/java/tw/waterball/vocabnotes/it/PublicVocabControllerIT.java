@@ -167,7 +167,7 @@ public class PublicVocabControllerIT {
     @Test
     public void integrationTest() throws Exception {
         List<List<ExceptionalRunnable>> deletionScenarioPermutation =
-                Collections.singletonList(Arrays.asList(this::deletionTestCaseA, this::deletionTestCaseB, this::deletionTestCaseC));
+                PermutationUtils.permutation(Arrays.asList(this::deletionTestCaseA, this::deletionTestCaseB, this::deletionTestCaseC));
 
         for (List<ExceptionalRunnable> deletionScenario : deletionScenarioPermutation) {
             runDeletionTestScenario(deletionScenario, false);

@@ -14,24 +14,11 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.it.scenario;
-
-import tw.waterball.vocabnotes.utils.PermutationUtils;
-
-import java.util.List;
-
-import static java.util.Arrays.asList;
-
+package tw.waterball.vocabnotes.models.repositories;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public class Scenario {
-    private List<TestCase> testCases;
-
-    public Scenario(TestCase ...testCases) {
-        this.testCases = asList(testCases);
-    }
-
-
+public interface CascadeWordGroupDeletion {
+    void deleteById(int wordGroupId);
 }

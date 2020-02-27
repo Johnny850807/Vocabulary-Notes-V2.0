@@ -14,19 +14,12 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.it.scenario;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+package tw.waterball.vocabnotes.models.repositories;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Getter @Setter @AllArgsConstructor
-public class TestCase {
-    private String name;
-    private final Runnable runnable;
+public interface CascadeDictionaryDeletion {
 
-
+    void deleteById(int dictionaryId);
 }

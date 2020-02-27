@@ -24,6 +24,8 @@ import tw.waterball.vocabnotes.models.dto.MemberDTO;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.services.DictionaryService;
 import tw.waterball.vocabnotes.services.MemberService;
+import tw.waterball.vocabnotes.services.StandardMemberService;
+import tw.waterball.vocabnotes.services.token.JwtTokenService;
 import tw.waterball.vocabnotes.services.token.TokenService;
 import tw.waterball.vocabnotes.services.token.TokenClaim;
 

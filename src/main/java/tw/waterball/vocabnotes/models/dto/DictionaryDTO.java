@@ -35,17 +35,11 @@ public class DictionaryDTO {
     private Integer ownerId;
     private Dictionary.Type type;
 
-    private static ThreadLocal<DictionaryDTO> caches = new ThreadLocal<>();
 
     public static DictionaryDTO project(Dictionary dictionary) {
-        DictionaryDTO dto = caches.get();
-        if (dto == null) {
-            dto = new DictionaryDTO(dictionary.getId(), dictionary.getTitle(),
-                    dictionary.getDescription(),
-                    dictionary.getOwner() == null ? null : dictionary.getOwner().getId(),
-                    dictionary.getType());
-            caches.set(dto);
-        }
-        return dto;
+        return new DictionaryDTO(dictionary.getId(), dictionary.getTitle(),
+                dictionary.getDescription(),
+                dictionary.getOwner() == null ? null : dictionary.getOwner().getId(),
+                dictionary.getType());
     }
 }

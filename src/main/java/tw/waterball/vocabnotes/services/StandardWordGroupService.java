@@ -65,9 +65,7 @@ public class StandardWordGroupService implements WordGroupService {
 
     @Override
     public void deleteWordGroup(int wordGroupId) {
-        WordGroup wordGroup = getWordGroup(wordGroupId);
-        wordGroup.removeAllWords();
-        wordGroupRepository.delete(wordGroup);
+        wordGroupRepository.deleteById(wordGroupId);
     }
 
 
@@ -86,7 +84,6 @@ public class StandardWordGroupService implements WordGroupService {
         wordGroup.removeWord(word);
         wordGroupRepository.save(wordGroup);
     }
-
 
     @Override
     public List<WordGroup> getWordGroups(int dictionaryId, @Nullable Integer offset, @Nullable Integer limit) {

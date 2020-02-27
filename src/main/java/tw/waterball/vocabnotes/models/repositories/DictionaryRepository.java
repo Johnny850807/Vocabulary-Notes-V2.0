@@ -26,9 +26,13 @@ import tw.waterball.vocabnotes.models.entities.Dictionary;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Repository
-public interface DictionaryRepository extends JpaRepository<Dictionary, Integer>, PagingDictionaryRepository {
+public interface DictionaryRepository extends
+        JpaRepository<Dictionary, Integer>, PagingDictionaryRepository, CascadeDictionaryDeletion {
 
     @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
             "FROM Dictionary d WHERE d.owner.id = :ownerId")
     boolean existsByOwnerId(int ownerId);
+
+
+
 }
