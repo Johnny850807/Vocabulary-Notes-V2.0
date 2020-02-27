@@ -16,18 +16,16 @@
 
 package tw.waterball.vocabnotes.services;
 
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.api.Responses;
-import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberInfo;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
+import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.DictionaryRepository;
 import tw.waterball.vocabnotes.models.repositories.MemberRepository;
+import tw.waterball.vocabnotes.models.repositories.WordGroupRepository;
 import tw.waterball.vocabnotes.services.exceptions.DuplicateEmailException;
 import tw.waterball.vocabnotes.services.exceptions.EmailNotFoundException;
 import tw.waterball.vocabnotes.services.exceptions.PasswordNotCorrectException;
@@ -42,17 +40,21 @@ import java.util.List;
  */
 @Service
 public class StandardMemberService implements MemberService {
-    private JwtService jwtService;
     private MemberRepository memberRepository;
     private DictionaryRepository dictionaryRepository;
+    private WordGroupRepository wordGroupRepository;
 
     @Autowired
-    public StandardMemberService(MemberRepository memberRepository) {
+    public StandardMemberService(MemberRepository memberRepository,
+                                 DictionaryRepository dictionaryRepository,
+                                 WordGroupRepository wordGroupRepository) {
         this.memberRepository = memberRepository;
+        this.dictionaryRepository = dictionaryRepository;
+        this.wordGroupRepository = wordGroupRepository;
     }
 
     @Override
-    public MemberInfo createMember(Requests.RegisterMember request) throws DuplicateEmailException {
+    public Member createMember(Requests.RegisterMember request) throws DuplicateEmailException {
         if (memberRepository.existsByEmail(request.getCredentials().getEmail())) {
             throw new DuplicateEmailException(request.getCredentials().getEmail());
         }
@@ -60,31 +62,22 @@ public class StandardMemberService implements MemberService {
     }
 
     @Override
-    public Responses.TokenResponse login(Credentials credentials) throws EmailNotFoundException, PasswordNotCorrectException {
-        Member member = memberRepository.findByEmail(credentials.getEmail())
-                .orElseThrow(() -> new EmailNotFoundException(credentials.getEmail()));
+    public Member login(String email, String password) throws EmailNotFoundException, PasswordNotCorrectException {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailNotFoundException(email));
 
-        if (!member.getPassword().equals(credentials.getPassword())) {
-            throw new PasswordNotCorrectException(credentials.getPassword());
+        if (!member.getPassword().equals(password)) {
+            throw new PasswordNotCorrectException(password);
         }
 
-        String token = jwtService.getJwt(new JwtService.Claim(member.getRole(), member.getId()));
-        return new Responses.TokenResponse(token, jwtService.getDefaultExpirationTime().getTime(), member.getId());
+        return member;
     }
 
-    @Override
-    public Responses.TokenResponse renewToken(String token) {
-        JwtService.JwtToken jwt = jwtService.parse(token);
-        int memberId = jwt.getClaim().getMemberId();
-        String renewedToken = jwtService.getJwt(new JwtService.Claim(jwt.getClaim().getRole(), memberId));
-        return new Responses.TokenResponse(renewedToken, jwtService.getDefaultExpirationTime().getTime(), memberId);
-    }
 
     @Override
     public Member getMember(int memberId) {
         return findMemberByIdOrThrowNotFound(memberId);
     }
-
 
     @Override
     public void updateMember(int memberId, Requests.UpdateMember request) {
@@ -100,36 +93,45 @@ public class StandardMemberService implements MemberService {
     }
 
     @Override
-    public DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request) {
-        Member owner = getMember(ownerId);
-        Dictionary dict = dictionaryRepository.save(Dictionary.builder()
-                .owner(owner)
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .type(Dictionary.Type.OWN).build());
-        return DictionaryDTO.project(dict);
+    public Dictionary createOwnDictionary(int ownerId, Requests.CreateDictionary request) {
+        Member owner = findMemberByIdOrThrowNotFound(ownerId);
+        Dictionary ownDict = Dictionary.builder()
+                                .title(request.getTitle())
+                                .description(request.getDescription())
+                                .type(Dictionary.Type.OWN).build();
+        owner.addOwnDictionary(ownDict);
+        ownDict = dictionaryRepository.save(ownDict);
+        return ownDict;
     }
 
     @Override
     public void referenceWordGroup(int memberId, int dictionaryId, int wordGroupId) {
-
+        validateMemberOwnDictionary(memberId, dictionaryId);
+        Dictionary dictionary = findDictionaryByIdOrThrowNotFound(dictionaryId);
+        dictionary.addWordGroup(findWordGroupByIdOrThrowNotFound(wordGroupId));
     }
 
     @Override
     public void removeWordGroupReference(int memberId, int dictionaryId, int wordGroupId) {
-
+        validateMemberOwnDictionary(memberId, dictionaryId);
+        Dictionary dictionary = findDictionaryByIdOrThrowNotFound(dictionaryId);
+        dictionary.removeWordGroup(findWordGroupByIdOrThrowNotFound(wordGroupId));
     }
 
     @Override
     public void favoriteDictionary(int memberId, int dictionaryId) {
         Member member = findMemberByIdOrThrowNotFound(memberId);
         Dictionary dictionary = findDictionaryByIdOrThrowNotFound(dictionaryId);
-        // TODO favorite
+        member.addFavoriteDictionary(dictionary);
+        memberRepository.save(member);
     }
 
-    private Dictionary findDictionaryByIdOrThrowNotFound(int dictionaryId) {
-        return dictionaryRepository.findById(dictionaryId)
-                .orElseThrow(() -> new ResourceNotFoundException("dictionary", dictionaryId));
+    @Override
+    public void removeFavoriteDictionary(int memberId, int dictionaryId) {
+        Member member = findMemberByIdOrThrowNotFound(memberId);
+        Dictionary dictionary = findDictionaryByIdOrThrowNotFound(dictionaryId);
+        member.removeFavoriteDictionary(dictionary);
+        memberRepository.save(member);
     }
 
     @Override
@@ -153,6 +155,16 @@ public class StandardMemberService implements MemberService {
         if (!dictionaryRepository.existsByOwnerId(memberId)) {
             throw new DictionaryNotOwnException(memberId, dictionaryId);
         }
+    }
+
+    private Dictionary findDictionaryByIdOrThrowNotFound(int dictionaryId) {
+        return dictionaryRepository.findById(dictionaryId)
+                .orElseThrow(() -> new ResourceNotFoundException("dictionary", dictionaryId));
+    }
+
+    private WordGroup findWordGroupByIdOrThrowNotFound(int wordGroupId) {
+        return wordGroupRepository.findById(wordGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("wordGroup", wordGroupId));
     }
 
     private Member findMemberByIdOrThrowNotFound(int memberId) {

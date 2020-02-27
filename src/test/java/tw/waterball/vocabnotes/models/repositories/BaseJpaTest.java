@@ -14,35 +14,15 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.dto;
+package tw.waterball.vocabnotes.models.repositories;
 
-import lombok.Data;
-import tw.waterball.vocabnotes.models.entities.Member;
-
-import javax.validation.constraints.*;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import tw.waterball.vocabnotes.BaseSpringTest;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Data
-public class MemberInfoDTO implements MemberInfo {
-    @Size(min = 1, max=18)
-    private String firstName;
-
-    @Size(min = 1, max=18)
-    private String lastName;
-
-    @Min(1) @Max(150)
-    private int age;
-
-    @Email
-    @Size(max=30)
-    private String email;
-
-    private int exp = 0;
-    private int level = 1;
-
-    @NotNull
-    private Member.Role role;
+@DataJpaTest
+public class BaseJpaTest extends BaseSpringTest {
 
 }

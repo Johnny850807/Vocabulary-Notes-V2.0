@@ -20,13 +20,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Range;
 import tw.waterball.vocabnotes.models.Level;
-import tw.waterball.vocabnotes.models.dto.MemberInfo;
+import tw.waterball.vocabnotes.models.dto.MemberDTO;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
@@ -36,7 +39,7 @@ import java.util.List;
 @ToString
 
 @Entity
-public class Member implements IdEntity, MemberInfo {
+public class Member implements IdEntity {
     private Integer id;
 
     @Size(min = 1, max=18)
@@ -45,7 +48,7 @@ public class Member implements IdEntity, MemberInfo {
     @Size(min = 1, max=18)
     private String lastName;
 
-    @Min(1) @Max(150)
+    @Range(min = 1, max = 150)
     private int age;
 
     @Email
@@ -63,6 +66,9 @@ public class Member implements IdEntity, MemberInfo {
 
     @ToString.Exclude
     private transient List<Dictionary> ownDictionaries = new ArrayList<>();
+
+    @ToString.Exclude
+    private transient Set<Dictionary> favoriteDictionaries = new HashSet<>();
 
     public enum Role {
         MEMBER, ADMIN
@@ -90,20 +96,30 @@ public class Member implements IdEntity, MemberInfo {
         this.role = role;
     }
 
-    @Override
     public void setExp(int exp) {
         this.exp = exp;
         this.level = Level.getLevelFromExp(exp).getNumber();
     }
 
-    public void addDictionary(Dictionary dictionary) {
+    public void addFavoriteDictionary(Dictionary dictionary) {
+        favoriteDictionaries.add(dictionary);
+    }
+
+    public void removeFavoriteDictionary(Dictionary dictionary) {
+        favoriteDictionaries.remove(dictionary);
+    }
+
+    public void addOwnDictionary(Dictionary dictionary) {
         ownDictionaries.add(dictionary);
         dictionary.setOwner(this);
     }
 
-    public void removeDictionary(Dictionary dictionary) {
+    public void removeOwnDictionary(Dictionary dictionary) {
         ownDictionaries.remove(dictionary);
         dictionary.setOwner(null);
     }
 
+    public MemberDTO toDTO() {
+        return MemberDTO.project(this);
+    }
 }

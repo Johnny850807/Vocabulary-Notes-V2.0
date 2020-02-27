@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-        version="2.0">
+                 version="2.0">
     <access>PROPERTY</access>
 
     <entity class="tw.waterball.vocabnotes.models.entities.Member">
@@ -21,8 +21,21 @@
             <basic name="role">
                 <enumerated>STRING</enumerated>
             </basic>
-            <one-to-many name="ownDictionaries" 
-                         mapped-by="owner"/>
+
+            <one-to-many name="ownDictionaries"
+                         mapped-by="owner"
+                         fetch="LAZY">
+                <cascade>
+                    <cascade-persist/>
+                </cascade>
+            </one-to-many>
+
+            <many-to-many name="favoriteDictionaries" fetch="LAZY">
+                <join-table name="member_favorite_dictionary">
+                    <join-column name="member_id"/>
+                    <inverse-join-column name="dictionary_id"/>
+                </join-table>
+            </many-to-many>
         </attributes>
     </entity>
 

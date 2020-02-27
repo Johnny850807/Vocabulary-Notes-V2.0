@@ -17,6 +17,7 @@
 package tw.waterball.vocabnotes.models.entities;
 
 import lombok.*;
+import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -55,6 +56,11 @@ public class Dictionary implements IdEntity {
     @Singular
     private Set<WordGroup> wordGroups = new HashSet<>();
 
+    public Dictionary(String title,String description, Type type) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+    }
 
     public void addWordGroup(WordGroup wordGroup) {
         wordGroups.add(wordGroup);
@@ -66,6 +72,10 @@ public class Dictionary implements IdEntity {
 
     public enum Type {
         PUBLIC, OWN
+    }
+
+    public DictionaryDTO toDTO() {
+        return DictionaryDTO.project(this);
     }
 
 }

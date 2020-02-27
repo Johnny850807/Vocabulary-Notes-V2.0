@@ -1,3 +1,4 @@
+DELETE FROM member_favorite_dictionary WHERE TRUE;
 DELETE FROM dictionary_wordgroup WHERE TRUE;
 DELETE FROM wordgroup_word WHERE TRUE;
 DELETE FROM word WHERE TRUE;

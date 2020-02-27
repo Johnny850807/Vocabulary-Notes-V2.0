@@ -14,37 +14,14 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.dto;
+package tw.waterball.vocabnotes.models.repositories;
+
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public interface MemberInfo {
-    String getFirstName();
 
-    String getLastName();
-
-    int getAge();
-
-    String getEmail();
-
-    int getExp();
-
-    int getLevel();
-
-    tw.waterball.vocabnotes.models.entities.Member.Role getRole();
-
-    void setFirstName(String firstName);
-
-    void setLastName(String lastName);
-
-    void setAge(int age);
-
-    void setEmail(String email);
-
-    void setExp(int exp);
-
-    void setLevel(int level);
-
-    void setRole(tw.waterball.vocabnotes.models.entities.Member.Role role);
+@ComponentScan
+public class RepositoryComponentScan {
 }

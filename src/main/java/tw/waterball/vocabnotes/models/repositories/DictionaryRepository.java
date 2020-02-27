@@ -16,6 +16,7 @@
 
 package tw.waterball.vocabnotes.models.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -25,7 +26,7 @@ import tw.waterball.vocabnotes.models.entities.Dictionary;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Repository
-public interface DictionaryRepository extends CrudRepository<Dictionary, Integer>, PagingDictionaryRepository {
+public interface DictionaryRepository extends JpaRepository<Dictionary, Integer>, PagingDictionaryRepository {
 
     @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
             "FROM Dictionary d WHERE d.owner.id = :ownerId")

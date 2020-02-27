@@ -36,6 +36,13 @@ public interface WordGroupService {
     void deleteWordGroup(int wordGroupId);
     void addWordIntoWordGroup(String wordName, int wordGroupId);
     void removeWordFromWordGroup(String wordName, int wordGroupId);
+
+    default List<WordGroup> getWordGroups(int dictionaryId) {
+        return getWordGroups(dictionaryId, null, null);
+    }
+    default List<WordGroup> getWordGroups(int dictionaryId, @Nullable Integer offset) {
+        return getWordGroups(dictionaryId, offset, null);
+    }
     List<WordGroup> getWordGroups(int dictionaryId, @Nullable Integer offset, @Nullable Integer limit);
 
 }

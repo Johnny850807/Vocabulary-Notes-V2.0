@@ -16,6 +16,7 @@
 
 DROP TABLE IF EXISTS wordgroup_word;
 DROP TABLE IF EXISTS dictionary_wordgroup;
+DROP TABLE IF EXISTS member_favorite_dictionary;
 DROP TABLE IF EXISTS word, wordgroup, dictionary;
 DROP TABLE IF EXISTS member;
 
@@ -29,7 +30,7 @@ CREATE TABLE member
   password   VARCHAR(128) NOT NULL,
   exp        INTEGER                  DEFAULT 0,
   level      INTEGER                  DEFAULT 1,
-  role       ENUM ('MEMBER', 'ADMIN') DEFAULT 'memberCreationInfo'
+  role       ENUM ('MEMBER', 'ADMIN') DEFAULT 'MEMBER'
 );
 
 CREATE TABLE dictionary
@@ -76,5 +77,13 @@ CREATE TABLE wordgroup_word
   FOREIGN KEY (word_id) REFERENCES word (id)
 );
 
+CREATE TABLE member_favorite_dictionary
+(
+  member_id     INTEGER,
+  dictionary_id INTEGER,
+  CONSTRAINT PK_member_favorite_dictionary PRIMARY KEY (member_id, dictionary_id),
+  FOREIGN KEY (member_id) REFERENCES member (id),
+  FOREIGN KEY (dictionary_id) REFERENCES dictionary (id)
+);
 
 

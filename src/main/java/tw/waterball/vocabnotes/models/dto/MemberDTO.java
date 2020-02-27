@@ -18,34 +18,39 @@ package tw.waterball.vocabnotes.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
+import tw.waterball.vocabnotes.models.entities.Member;
 
-import java.lang.ref.WeakReference;
+import javax.validation.constraints.*;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-
-@Data
-@AllArgsConstructor
-public class DictionaryDTO {
+@Data @AllArgsConstructor
+public class MemberDTO {
     private Integer id;
-    private String title;
-    private String description;
-    private Integer ownerId;
-    private Dictionary.Type type;
 
-    private static ThreadLocal<DictionaryDTO> caches = new ThreadLocal<>();
+    @Size(min = 1, max=18)
+    private String firstName;
 
-    public static DictionaryDTO project(Dictionary dictionary) {
-        DictionaryDTO dto = caches.get();
-        if (dto == null) {
-            dto = new DictionaryDTO(dictionary.getId(), dictionary.getTitle(),
-                    dictionary.getDescription(),
-                    dictionary.getOwner() == null ? null : dictionary.getOwner().getId(),
-                    dictionary.getType());
-            caches.set(dto);
-        }
-        return dto;
+    @Size(min = 1, max=18)
+    private String lastName;
+
+    @Min(1) @Max(150)
+    private int age;
+
+    @Email
+    @Size(max=30)
+    private String email;
+
+    private int exp = 0;
+    private int level = 1;
+
+    @NotNull
+    private Member.Role role;
+
+    public static MemberDTO project(Member m) {
+        return new MemberDTO(m.getId(), m.getFirstName(), m.getLastName(),
+                m.getAge(), m.getEmail(), m.getExp(), m.getLevel(), m.getRole());
     }
+
 }

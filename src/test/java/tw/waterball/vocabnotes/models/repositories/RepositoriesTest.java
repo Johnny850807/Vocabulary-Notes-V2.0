@@ -19,12 +19,19 @@ package tw.waterball.vocabnotes.models.repositories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.transaction.TestTransaction;
 import tw.waterball.vocabnotes.BaseSpringTest;
+import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
+import tw.waterball.vocabnotes.utils.RandomEntityGenerator;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -35,8 +42,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
  */
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql(scripts = {"classpath:clear.sql", "classpath:stub.sql"}, executionPhase = BEFORE_TEST_METHOD)
-@DataJpaTest
-class RepositoryTest extends BaseSpringTest {
+class RepositoriesTest extends BaseJpaTest {
 
     @Autowired
     MemberRepository memberRepository;
@@ -48,15 +54,37 @@ class RepositoryTest extends BaseSpringTest {
     WordGroupRepository wordGroupRepository;
 
     @Test
-    public void testMemberRepository() {
-        Member member = memberRepository.findById(1).get();
-        assertEquals("Johnny", member.getFirstName());
-
+    public void testCreateMember() {
         Member created = new Member(2, "A", "B", 15, "test@email.com", "Pass", Member.Role.MEMBER);
         created = memberRepository.save(created);
         Member found = memberRepository.findById(created.getId()).get();
         assertEntityEquals(created, found);
     }
+
+    @Test
+    public void testMemberFavoriteDictionary() {
+        Member member = memberRepository.findByEmail("johnny850807@gmail.com").get();
+        assertEquals(1, member.getFavoriteDictionaries().size(), "There should exist only 1 favorite dictionary in stub.sql");
+        Dictionary favDict = member.getFavoriteDictionaries().iterator().next();
+        assertEquals(1, favDict.getId(), "The favorite dictionary should have id 1");
+
+        Dictionary newFavDict = RandomEntityGenerator.randomDictionary(Dictionary.Type.PUBLIC, 0, 0, 0, 0);
+        newFavDict = dictionaryRepository.save(newFavDict);
+        member.getFavoriteDictionaries().add(newFavDict);
+        memberRepository.save(member);
+
+        commitAndRestartTransaction();
+        member = memberRepository.findById(1).get();
+        assertEquals(2, member.getFavoriteDictionaries().size(), "The favorite dictionary has not been added.");
+
+        member.removeFavoriteDictionary(dictionaryRepository.getOne(newFavDict.getId()));
+        memberRepository.save(member);
+
+        commitAndRestartTransaction();
+        member = memberRepository.findById(1).get();
+        assertEquals(1, member.getFavoriteDictionaries().size(), "The favorite dictionary has not been added.");
+    }
+
 
     @Test
     public void testDictionaryRepository() {

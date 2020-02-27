@@ -20,11 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberInfo;
+import tw.waterball.vocabnotes.models.dto.MemberDTO;
 import tw.waterball.vocabnotes.models.entities.Member;
-import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.services.DictionaryService;
 import tw.waterball.vocabnotes.services.MemberService;
+import tw.waterball.vocabnotes.services.token.TokenService;
+import tw.waterball.vocabnotes.services.token.TokenClaim;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -35,28 +36,45 @@ import java.util.List;
 @RequestMapping("/api/members")
 @RestController
 public class MemberController {
+    private TokenService tokenService;
     private MemberService memberService;
     private DictionaryService dictionaryService;
 
     @Autowired
-    public MemberController(MemberService memberService, DictionaryService dictionaryService) {
+    public MemberController(TokenService tokenService,
+                            MemberService memberService,
+                            DictionaryService dictionaryService) {
+        this.tokenService = tokenService;
         this.memberService = memberService;
         this.dictionaryService = dictionaryService;
     }
 
     @PostMapping("/tokens")
     public Responses.TokenResponse createToken(@RequestBody @Valid Credentials credentials) {
-        return memberService.login(credentials);
+        Member member = memberService.login(credentials);
+        TokenService.Token renewedToken = tokenService.createToken(
+                new TokenClaim(member.getRole(), member.getId()));
+        return new Responses.TokenResponse(renewedToken.toString(),
+                renewedToken.getExpirationTime().getTime(), renewedToken.getMemberId());
     }
 
     @PostMapping("/tokens/refresh")
     public Responses.TokenResponse renewToken(@RequestBody String token) {
-        return memberService.renewToken(token);
+        TokenService.Token renewedToken = tokenService.renewToken(token);
+        return new Responses.TokenResponse(renewedToken.toString(),
+                renewedToken.getExpirationTime().getTime(), renewedToken.getMemberId());
     }
 
     @PostMapping
-    public MemberInfo createMember(@RequestBody @Valid Requests.RegisterMember request) {
-        return memberService.createMember(request);
+    public Responses.TokenResponse createMember(@RequestBody @Valid Requests.RegisterMember request) {
+        Member member = memberService.createMember(request);
+        return createTokenResponse(member.getRole(), member.getId());
+    }
+
+    private Responses.TokenResponse createTokenResponse(Member.Role role, int memberId) {
+        TokenService.Token renewedToken = tokenService.createToken(new TokenClaim(role, memberId));
+        return new Responses.TokenResponse(renewedToken.toString(),
+                renewedToken.getExpirationTime().getTime(), renewedToken.getMemberId());
     }
 
     @GetMapping("/{memberId}")
@@ -70,7 +88,6 @@ public class MemberController {
         memberService.updateMember(memberId, request);
     }
 
-
     @GetMapping("/{memberId}/own/dictionaries")
     public List<DictionaryDTO> getOwnDictionaries(@PathVariable int memberId,
                                                   @RequestParam(required = false) Integer offset,
@@ -80,7 +97,7 @@ public class MemberController {
 
     @PostMapping("/{memberId}/own/dictionaries")
     public DictionaryDTO createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.CreateDictionary request) {
-        return memberService.createOwnDictionary(memberId, request);
+        return memberService.createOwnDictionary(memberId, request).toDTO();
     }
 
     /**
@@ -88,20 +105,19 @@ public class MemberController {
      */
     @GetMapping("/{memberId}/own/dictionaries/{dictionaryId}")
     public DictionaryDTO getOwnDictionary(@PathVariable int memberId,
-                                                  @PathVariable int dictionaryId) {
+                                          @PathVariable int dictionaryId) {
         return dictionaryService.getDictionary(dictionaryId);
     }
 
-
     @DeleteMapping("/{memberId}/own/dictionaries/{dictionaryId}")
     public void deleteOwnDictionary(@PathVariable int memberId,
-                                                     @PathVariable int dictionaryId) {
+                                    @PathVariable int dictionaryId) {
         memberService.deleteOwnDictionary(memberId, dictionaryId);
     }
 
     @PostMapping("/{memberId}/dictionaries/{dictionaryId}/favorite")
     public void favoriteDictionary(@PathVariable int memberId,
-                                         @PathVariable int dictionaryId) {
+                                   @PathVariable int dictionaryId) {
         memberService.favoriteDictionary(memberId, dictionaryId);
     }
 

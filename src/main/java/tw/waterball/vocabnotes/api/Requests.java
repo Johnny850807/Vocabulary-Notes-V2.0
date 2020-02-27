@@ -22,11 +22,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import tw.waterball.vocabnotes.models.dto.Credentials;
-import tw.waterball.vocabnotes.models.dto.MemberInfoDTO;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.Optional;
 
 /**
@@ -58,7 +59,7 @@ public final class Requests {
         }
     }
 
-    @Data
+    @Data @AllArgsConstructor
     public static class RegisterMember {
         @Valid
         private CreateMember memberCreationInfo;
@@ -85,7 +86,7 @@ public final class Requests {
         private int age;
     }
 
-    @Data
+    @Data @AllArgsConstructor
     public static class UpdateMember {
         @Size(min = 1, max = 18)
         private String firstName;

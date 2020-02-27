@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.transaction.TestTransaction;
 import tw.waterball.vocabnotes.models.entities.IdEntity;
 import tw.waterball.vocabnotes.utils.EntityEquality;
 
@@ -32,5 +33,12 @@ public class BaseSpringTest {
     public void assertEntityEquals(IdEntity o1, IdEntity o2) {
         Assertions.assertTrue(EntityEquality.equals(o1, o2),
                 "Two " + o1.getClass().getSimpleName() +"s are not equals.");
+    }
+
+
+    protected static void commitAndRestartTransaction() {
+        TestTransaction.flagForCommit();
+        TestTransaction.end();
+        TestTransaction.start();
     }
 }

@@ -20,22 +20,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tw.waterball.vocabnotes.BaseSpringTest;
+import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.utils.PagingTrigger;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
+/**
+ * @author johnny850807 (Waterball)
+ */
 @Sql(scripts = "classpath:dictionaries.sql")
-@DataJpaTest
+@ContextConfiguration(classes = VocabNotesApplication.class)
+@AutoConfigureTestEntityManager
+@Transactional
 class PagingDictionaryRepositoryImplTest extends BaseSpringTest {
     private final int PUBLIC_START_ID = 1;
     private final int OWN_START_ID = 14;

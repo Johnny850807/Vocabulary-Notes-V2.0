@@ -17,10 +17,9 @@
 package tw.waterball.vocabnotes.services;
 
 import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.api.Responses;
 import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberInfo;
+import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.services.exceptions.DuplicateEmailException;
 import tw.waterball.vocabnotes.services.exceptions.EmailNotFoundException;
@@ -33,13 +32,15 @@ import java.util.List;
  */
 public interface MemberService {
 
-    Responses.TokenResponse login(Credentials credentials) throws EmailNotFoundException, PasswordNotCorrectException;
+    Member login(String email, String password) throws EmailNotFoundException, PasswordNotCorrectException;
 
-    Responses.TokenResponse renewToken(String token);
+    default Member login(Credentials credentials) throws EmailNotFoundException, PasswordNotCorrectException {
+        return login(credentials.getEmail(), credentials.getPassword());
+    }
 
     Member getMember(int memberId);
 
-    MemberInfo createMember(Requests.RegisterMember request) throws DuplicateEmailException;
+    Member createMember(Requests.RegisterMember request) throws DuplicateEmailException;
 
     void updateMember(int memberId, Requests.UpdateMember request);
 
@@ -47,9 +48,19 @@ public interface MemberService {
 
     void deleteOwnDictionary(int memberId, int dictionaryId);
 
+    default List<DictionaryDTO> getOwnDictionaries(int memberId) {
+        return getOwnDictionaries(memberId, null, null);
+    }
+
+    default List<DictionaryDTO> getOwnDictionaries(int memberId, Integer offset) {
+        return getOwnDictionaries(memberId, offset, null);
+    }
+
+    void removeFavoriteDictionary(int memberId, int dictionaryId);
+
     List<DictionaryDTO> getOwnDictionaries(int memberId, Integer offset, Integer limit);
 
-    DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request);
+    Dictionary createOwnDictionary(int ownerId, Requests.CreateDictionary request);
 
     void referenceWordGroup(int memberId, int dictionaryId, int wordGroupId);
 

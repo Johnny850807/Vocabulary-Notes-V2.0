@@ -14,20 +14,12 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.repositories;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import tw.waterball.vocabnotes.models.entities.Member;
-
-import java.util.Optional;
+package tw.waterball.vocabnotes.services.token;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Repository
-public interface MemberRepository extends JpaRepository<Member, Integer> {
-
-    boolean existsByEmail(String email);
-    Optional<Member> findByEmail(String email);
+public interface JwtToken extends TokenService.Token {
+    TokenClaim getClaim();
+    String toString();
 }

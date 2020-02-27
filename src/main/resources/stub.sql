@@ -21,3 +21,6 @@ VALUES (1, 1), (1, 2), (1, 3);
 INSERT INTO dictionary_wordgroup (dictionary_id, wordgroup_id)
 VALUES (1, 1);
 
+INSERT INTO member_favorite_dictionary (member_id, dictionary_id)
+VALUES (1, 1);
+

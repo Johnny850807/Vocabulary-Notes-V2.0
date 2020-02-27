@@ -19,13 +19,16 @@ package tw.waterball.vocabnotes.spring.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import tw.waterball.vocabnotes.models.repositories.RepositoryComponentScan;
 import tw.waterball.vocabnotes.spring.profiles.Prod;
 
 import javax.sql.DataSource;
@@ -34,7 +37,9 @@ import javax.sql.DataSource;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
+@EnableJpaRepositories
 @Configuration
+@ComponentScan(basePackageClasses = RepositoryComponentScan.class)
 public class JpaConfig {
 
     @Bean
@@ -52,18 +57,9 @@ public class JpaConfig {
     @ConditionalOnMissingBean
     public DataSource embeddedDatabase() {
         return new EmbeddedDatabaseBuilder()
-                .addScript("schema.sql")
-                .addScript("stub.sql")
                 .setType(EmbeddedDatabaseType.H2)
                 .build();
     }
 
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter(Environment env) {
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(true);
-        vendorAdapter.setShowSql(!env.acceptsProfiles(Profiles.of(Prod.name)));
-        return vendorAdapter;
-    }
 
 }
