@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 /**
+ * An util helps iterate the paging requests.
  * @author johnny850807@gmail.com (Waterball))
  */
 public class PagingTrigger {
