@@ -31,13 +31,13 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     private TestEntityManager em;
 
     @Test
-    void getWordGroup() {
+    void testGetWordGroup() {
         WordGroup expected = em.find(WordGroup.class, 1);
         assertEntityEquals(expected, wordGroupService.getWordGroup(1));
     }
 
     @Test
-    void createWordGroup() {
+    void testCreateWordGroup() {
         WordGroup created = em.persistAndFlush(new WordGroup());
         commitAndRestartTransaction();
 
@@ -45,7 +45,7 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void patchWordGroup() {
+    void testPatchWordGroup() {
         wordGroupService.patchWordGroup(1, "patched");
         commitAndRestartTransaction();
 
@@ -54,7 +54,7 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void deleteWordGroup() {
+    void testDeleteWordGroup() {
         wordGroupService.deleteWordGroup(1);
         commitAndRestartTransaction();
 
@@ -66,7 +66,7 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void addWordIntoWordGroup() {
+    void testAddWordIntoWordGroup() {
         Word newWord = new Word("newWord", "", "https://sample.com/image.png");
         em.persistAndFlush(newWord);
         wordGroupService.addWordIntoWordGroup("newWord", 1);
@@ -77,7 +77,7 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void removeWordFromWordGroup() {
+    void testRemoveWordFromWordGroup() {
         wordGroupService.removeWordFromWordGroup("lease", 1);
         commitAndRestartTransaction();
 
@@ -86,7 +86,7 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void getWordGroups() {
+    void testGetWordGroups() {
         List<WordGroup> wordGroups = wordGroupService.getWordGroups(1);
         assertEntityEquals(em.find(WordGroup.class, 1), wordGroups.get(0));
     }

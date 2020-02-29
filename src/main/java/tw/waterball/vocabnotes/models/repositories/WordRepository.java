@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Repository
-public interface WordRepository extends CrudRepository<Word, Integer> {
+public interface WordRepository extends CrudRepository<Word, Integer>,
+        CascadeWordDeletion {
     Optional<Word> findByName(String wordName);
-    void deleteWordByName(String wordName);
 }

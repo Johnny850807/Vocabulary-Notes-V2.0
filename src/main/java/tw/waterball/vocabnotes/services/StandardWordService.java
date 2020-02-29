@@ -61,7 +61,7 @@ public class StandardWordService implements WordService {
 
     @Override
     public void deleteWord(String wordName) {
-        wordRepository.deleteWordByName(wordName);
+        wordRepository.deleteByName(wordName);
     }
 
     @Override
