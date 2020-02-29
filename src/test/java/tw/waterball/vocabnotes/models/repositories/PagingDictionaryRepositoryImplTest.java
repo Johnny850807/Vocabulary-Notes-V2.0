@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author johnny850807 (Waterball)
  */
-@Sql(scripts = "classpath:dictionaries.sql")
+@Sql(scripts = {"classpath:clear.sql", "classpath:dictionaries.sql"})
 @ContextConfiguration(classes = VocabNotesApplication.class)
 @AutoConfigureTestEntityManager
 @Transactional
