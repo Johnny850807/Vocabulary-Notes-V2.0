@@ -16,8 +16,7 @@
 
 package tw.waterball.vocabnotes.services.token;
 
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.models.entities.Member;
@@ -62,12 +61,15 @@ public class JwtTokenService implements TokenService {
         return createToken(jwt.getClaim());
     }
 
-    // TODO
-    private JwtToken parse(String token) {
-        Jwt jwt = Jwts.parserBuilder()
+    private JwtToken parse(String token) throws JwtException {
+        Jwt<Header, Claims> jwt = Jwts.parserBuilder()
                 .setSigningKey(key)
-                .build().parse(token);
-        return null;
+                .build().parseClaimsJwt(token);
+
+        int memberId = (int) jwt.getBody().get(TokenClaim.MEMBER_ID);
+        Member.Role role = Member.Role.valueOf(String.valueOf(jwt.getBody().get(TokenClaim.ROLE)));
+        return new JwtTokenImpl(jwt.getBody().getExpiration(),
+                new TokenClaim(role, memberId));
     }
 
 
