@@ -18,6 +18,7 @@ package tw.waterball.vocabnotes.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
@@ -25,7 +26,7 @@ import lombok.Data;
 public final class Responses {
     private Responses() { }
 
-    @Data @AllArgsConstructor
+    @Data @AllArgsConstructor @NoArgsConstructor
     public static class TokenResponse {
         private String token;
         private long expired;

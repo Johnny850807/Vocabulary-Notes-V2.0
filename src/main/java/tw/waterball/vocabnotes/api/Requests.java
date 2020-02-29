@@ -37,7 +37,7 @@ public final class Requests {
     private Requests(){}
 
     @Data
-    @AllArgsConstructor
+    @AllArgsConstructor @NoArgsConstructor
     public static class CreateDictionary {
         private String title;
         private String description;
@@ -59,7 +59,7 @@ public final class Requests {
         }
     }
 
-    @Data @AllArgsConstructor
+    @Data @AllArgsConstructor @NoArgsConstructor
     public static class RegisterMember {
         @Valid
         private CreateMember memberCreationInfo;
@@ -86,7 +86,7 @@ public final class Requests {
         private int age;
     }
 
-    @Data @AllArgsConstructor
+    @Data @AllArgsConstructor @NoArgsConstructor
     public static class UpdateMember {
         @Size(min = 1, max = 18)
         private String firstName;
@@ -96,7 +96,7 @@ public final class Requests {
         private int age;
     }
 
-    @Data @AllArgsConstructor
+    @Data @AllArgsConstructor @NoArgsConstructor
     public static class ModifyWordGroup {
         @Size(min = 1, max = 50)
         private String title;

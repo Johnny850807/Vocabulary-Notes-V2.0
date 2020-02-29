@@ -16,6 +16,8 @@
 
 package tw.waterball.vocabnotes.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 
@@ -25,15 +27,15 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.fasterxml.jackson.annotation.JsonProperty.*;
+
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
-@ToString
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @ToString
 
 @Entity
 public class Dictionary implements IdEntity {
@@ -47,12 +49,14 @@ public class Dictionary implements IdEntity {
     @Size(min = 1, max = 300)
     private String description;
 
+    @JsonProperty(access = Access.WRITE_ONLY)
     @ToString.Exclude
     private Member owner;
 
     @NotNull
     private Type type;
 
+    @JsonProperty(access = Access.WRITE_ONLY)
     @Singular
     private Set<WordGroup> wordGroups = new HashSet<>();
 

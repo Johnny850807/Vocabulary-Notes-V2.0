@@ -27,8 +27,7 @@ import java.util.List;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
 @ToString
 

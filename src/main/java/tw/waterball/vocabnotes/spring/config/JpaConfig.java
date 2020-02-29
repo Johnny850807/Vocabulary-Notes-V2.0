@@ -32,6 +32,7 @@ import tw.waterball.vocabnotes.models.repositories.RepositoryComponentScan;
 import tw.waterball.vocabnotes.spring.profiles.Prod;
 
 import javax.sql.DataSource;
+import java.util.ResourceBundle;
 
 
 /**
@@ -45,11 +46,12 @@ public class JpaConfig {
     @Bean
     @Prod
     public DataSource mysql() {
+        ResourceBundle bundle = ResourceBundle.getBundle("datasource");
         return DataSourceBuilder.create()
-                .driverClassName("com.mysql.jdbc.Driver")
-                .url("jdbc:mysql://us-cdbr-iron-east-04.cleardb.net/heroku_496f55a110503bd")
-                .username("b438f45aabed78")
-                .password("1fca831243d8758")
+                .driverClassName(bundle.getString("driverClassName"))
+                .url(bundle.getString("url"))
+                .username(bundle.getString("username"))
+                .password(bundle.getString("password"))
                 .build();
     }
 

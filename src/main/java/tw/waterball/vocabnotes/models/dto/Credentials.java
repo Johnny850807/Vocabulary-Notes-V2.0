@@ -18,13 +18,14 @@ package tw.waterball.vocabnotes.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Data @AllArgsConstructor
+@Data @AllArgsConstructor @NoArgsConstructor
 public class Credentials {
     // TODO email validate
     @Size(min = 1, max = 30)

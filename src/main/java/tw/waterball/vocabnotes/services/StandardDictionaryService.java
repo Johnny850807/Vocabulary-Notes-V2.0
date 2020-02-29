@@ -35,15 +35,12 @@ import java.util.List;
 @Service
 @Transactional
 public class StandardDictionaryService implements DictionaryService {
-    private MemberService memberService;
     private WordGroupService wordGroupService;
     private DictionaryRepository dictionaryRepository;
 
     @Autowired
-    public StandardDictionaryService(MemberService memberService,
-                                     WordGroupService wordGroupService,
+    public StandardDictionaryService(WordGroupService wordGroupService,
                                      DictionaryRepository dictionaryRepository) {
-        this.memberService = memberService;
         this.wordGroupService = wordGroupService;
         this.dictionaryRepository = dictionaryRepository;
     }
@@ -57,19 +54,19 @@ public class StandardDictionaryService implements DictionaryService {
     }
 
     @Override
-    public DictionaryDTO createPublicDictionary(Requests.CreateDictionary request) {
+    public Dictionary createPublicDictionary(Requests.CreateDictionary request) {
         Dictionary dict = dictionaryRepository.save(Dictionary.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .type(Dictionary.Type.PUBLIC).build());
-        return DictionaryDTO.project(dict);
+        return dict;
     }
 
 
 
     @Override
-    public DictionaryDTO getDictionary(int dictionaryId) {
-        return DictionaryDTO.project(findDictionaryOrThrowNotFound(dictionaryId));
+    public Dictionary getDictionary(int dictionaryId) {
+        return findDictionaryOrThrowNotFound(dictionaryId);
     }
 
 

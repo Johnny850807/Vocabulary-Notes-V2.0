@@ -16,11 +16,10 @@
 
 package tw.waterball.vocabnotes.it;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.internal.Streams;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -140,7 +139,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = VocabNotesApplication.class)
 public class PublicVocabControllerIT {
     @Autowired
-    private Gson gson;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private PublicVocabController publicVocabController;
@@ -250,7 +249,7 @@ public class PublicVocabControllerIT {
     }
 
     private void testAssociations() throws Exception {
-        final Type WGs_TYPE = new TypeToken<List<WordGroup>>() {}.getType();
+        final TypeReference<List<WordGroup>> WGs_TYPE = new TypeReference<List<WordGroup>>() {};
         List<WordGroup> expectEmpty = getEntity(WGs_TYPE, "/dictionaries/{id}/wordgroups", D.getId());
 
         assertTrue(expectEmpty.isEmpty(), "The dictionary with no word groups should respond with empty word group list.");
@@ -311,14 +310,13 @@ public class PublicVocabControllerIT {
 
     private int postEntityAndReturnId(IdEntity idEntity, String url) throws Exception {
         MvcResult mvcResult = mockMvc.perform(post(apiPrefix(url))
-                .content(gson.toJson(idEntity)).contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(idEntity)).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        JsonElement jsonElement = Streams.parse(new JsonReader(new StringReader(mvcResult.getResponse().getContentAsString())));
-
-        return jsonElement.getAsJsonObject().get("id").getAsInt();
+        JsonNode root = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
+        return root.get("id").asInt();
     }
 
     private MvcResult deleteToUrl(String url, Object ...pks) throws Exception {
@@ -327,9 +325,9 @@ public class PublicVocabControllerIT {
                 .andReturn();
     }
 
-    private <T> T getEntity(Type type, String url, Object ...pks) throws Exception {
+    private <T> T getEntity(TypeReference<T> type, String url, Object ...pks) throws Exception {
         MvcResult mvcResult = getEntityResult(url, pks);
-        return gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), type);
     }
 
     private MvcResult getEntityResult(String url, Object ...pks) throws Exception {
@@ -341,7 +339,7 @@ public class PublicVocabControllerIT {
 
     private void patchEntity(Object bodyObj, String url, Object ...pks) throws Exception {
         mockMvc.perform(patch(apiPrefix(url), pks)
-                .content(gson.toJson(bodyObj)).contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(bodyObj)).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -353,11 +351,11 @@ public class PublicVocabControllerIT {
 
     private void putEntity(IdEntity newEntity, String url, Object ...pks) throws Exception {
         mockMvc.perform(put(apiPrefix(url), pks)
-                .content(gson.toJson(newEntity)).contentType(APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(newEntity)).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
-    private <T extends IdEntity> void assertPaginationCorrect(Type listType, List<T> expected, int limit, String url, Object... pks) throws Exception {
+    private <T extends IdEntity> void assertPaginationCorrect(TypeReference<List<T>> listType, List<T> expected, int limit, String url, Object... pks) throws Exception {
         Object[] urlParams = new Object[pks.length+2];  //extend with offset, limit
         System.arraycopy(pks, 0, urlParams, 0, pks.length);
 
@@ -380,15 +378,15 @@ public class PublicVocabControllerIT {
         assertTrue(EntityEquality.equals(c1, c2));
     }
 
-    private <T extends IdEntity> void assertMvcResultCorrect(MvcResult mvcResult, T expectedEntity) throws UnsupportedEncodingException {
+    private <T extends IdEntity> void assertMvcResultCorrect(MvcResult mvcResult, T expectedEntity) throws UnsupportedEncodingException, JsonProcessingException {
         assertMvcResultCorrect(mvcResult, expectedEntity, false);
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends IdEntity> void assertMvcResultCorrect(MvcResult mvcResult, T expectedEntity, boolean testAssociations) throws UnsupportedEncodingException {
+    private <T extends IdEntity> void assertMvcResultCorrect(MvcResult mvcResult, T expectedEntity, boolean testAssociations) throws UnsupportedEncodingException, JsonProcessingException {
         String json = mvcResult.getResponse().getContentAsString();
         Class<T> type = (Class<T>) expectedEntity.getClass();
-        T actualEntity = gson.fromJson(json, type);
+        T actualEntity = objectMapper.readValue(json, type);
         assertTrue(EntityEquality.equals(actualEntity, expectedEntity, testAssociations));
     }
 

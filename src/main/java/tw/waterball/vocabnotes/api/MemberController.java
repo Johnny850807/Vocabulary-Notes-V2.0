@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import tw.waterball.vocabnotes.models.dto.Credentials;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.dto.MemberDTO;
+import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.services.DictionaryService;
 import tw.waterball.vocabnotes.services.MemberService;
@@ -35,7 +36,7 @@ import java.util.List;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@RequestMapping("/api/members")
+@RequestMapping(value = "/api/members", produces = "application/json;charset=UTF-8")
 @RestController
 public class MemberController {
     private TokenService tokenService;
@@ -106,8 +107,8 @@ public class MemberController {
      * This api is equivalent to /api/dictionaries/{dictionaryId}
      */
     @GetMapping("/{memberId}/own/dictionaries/{dictionaryId}")
-    public DictionaryDTO getOwnDictionary(@PathVariable int memberId,
-                                          @PathVariable int dictionaryId) {
+    public Dictionary getOwnDictionary(@PathVariable int memberId,
+                                       @PathVariable int dictionaryId) {
         return dictionaryService.getDictionary(dictionaryId);
     }
 

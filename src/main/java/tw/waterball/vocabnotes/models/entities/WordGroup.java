@@ -17,6 +17,7 @@
 package tw.waterball.vocabnotes.models.entities;
 
 import lombok.*;
+import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.Size;
@@ -28,8 +29,7 @@ import java.util.stream.Collectors;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
 @ToString
 
@@ -74,6 +74,11 @@ public class WordGroup implements IdEntity{
 
     public boolean hasTitle() {
         return title != null;
+    }
+
+
+    public WordGroupDTO toDTO() {
+        return WordGroupDTO.project(this);
     }
 
 }

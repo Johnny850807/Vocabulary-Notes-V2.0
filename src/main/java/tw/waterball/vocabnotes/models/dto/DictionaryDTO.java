@@ -18,6 +18,7 @@ package tw.waterball.vocabnotes.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 
 import java.lang.ref.WeakReference;
@@ -26,8 +27,7 @@ import java.lang.ref.WeakReference;
  * @author johnny850807@gmail.com (Waterball))
  */
 
-@Data
-@AllArgsConstructor
+@Data @AllArgsConstructor @NoArgsConstructor
 public class DictionaryDTO {
     private Integer id;
     private String title;

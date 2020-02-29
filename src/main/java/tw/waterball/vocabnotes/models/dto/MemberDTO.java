@@ -18,6 +18,7 @@ package tw.waterball.vocabnotes.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.validation.constraints.*;
@@ -25,7 +26,7 @@ import javax.validation.constraints.*;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Data @AllArgsConstructor
+@Data @AllArgsConstructor @NoArgsConstructor
 public class MemberDTO {
     private Integer id;
 

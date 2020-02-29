@@ -25,20 +25,28 @@ import org.springframework.test.context.transaction.TestTransaction;
 import tw.waterball.vocabnotes.models.entities.IdEntity;
 import tw.waterball.vocabnotes.utils.EntityEquality;
 
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 @ExtendWith(SpringExtension.class)
 public class BaseSpringTest {
     public void assertEntityEquals(IdEntity o1, IdEntity o2) {
-        Assertions.assertTrue(EntityEquality.equals(o1, o2),
+        assertTrue(EntityEquality.equals(o1, o2),
                 "Two " + o1.getClass().getSimpleName() +"s are not equals.");
     }
-
 
     protected static void commitAndRestartTransaction() {
         TestTransaction.flagForCommit();
         TestTransaction.end();
         TestTransaction.start();
+    }
+
+    protected static void assertEqualsIgnoreOrder(Collection c1, Collection c2) {
+        assertTrue(c1.size() == c2.size() &&
+                c1.containsAll(c2) && c2.containsAll(c1));
     }
 }

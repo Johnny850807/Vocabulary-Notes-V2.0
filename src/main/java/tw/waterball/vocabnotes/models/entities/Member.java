@@ -16,6 +16,8 @@
 
 package tw.waterball.vocabnotes.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,12 +33,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.fasterxml.jackson.annotation.JsonProperty.*;
+
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 @NoArgsConstructor
-@Getter @Setter
-@ToString
+@Getter @Setter @ToString
 
 @Entity
 public class Member implements IdEntity {
@@ -51,10 +54,10 @@ public class Member implements IdEntity {
     @Range(min = 1, max = 150)
     private int age;
 
-    @Email
-    @Size(max=30)
+    @Email @Size(max=30)
     private String email;
 
+    @JsonProperty(access = Access.WRITE_ONLY)
     @NotNull @NotBlank
     private String password;
 
@@ -64,9 +67,11 @@ public class Member implements IdEntity {
     @NotNull
     private Role role;
 
+    @JsonProperty(access = Access.WRITE_ONLY)
     @ToString.Exclude
     private transient List<Dictionary> ownDictionaries = new ArrayList<>();
 
+    @JsonProperty(access = Access.WRITE_ONLY)
     @ToString.Exclude
     private transient Set<Dictionary> favoriteDictionaries = new HashSet<>();
 
