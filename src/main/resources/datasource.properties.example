@@ -1,0 +1,5 @@
+
+driverClassName=com.mysql.jdbc.Driver
+url=jdbc:mysql:/127.0.0.1/database-name
+username=root
+password=password
