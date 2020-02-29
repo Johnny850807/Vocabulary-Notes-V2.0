@@ -34,6 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @ExtendWith(SpringExtension.class)
 public class BaseSpringTest {
+    public void assertEntityEquals(IdEntity o1, IdEntity o2, boolean includeAssociation) {
+        assertTrue(EntityEquality.equals(o1, o2, includeAssociation),
+                "Two " + o1.getClass().getSimpleName() +"s are not equals.");
+    }
     public void assertEntityEquals(IdEntity o1, IdEntity o2) {
         assertTrue(EntityEquality.equals(o1, o2),
                 "Two " + o1.getClass().getSimpleName() +"s are not equals.");

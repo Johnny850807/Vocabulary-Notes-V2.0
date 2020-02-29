@@ -46,6 +46,12 @@ public class Word implements IdEntity {
     @UrlConstraint
     private String imageUrl;
 
+    public Word(String name, String synonyms, String imageUrl) {
+        this.name = name;
+        this.synonyms = synonyms;
+        this.imageUrl = imageUrl;
+    }
+
     public void setSynonyms(List<String> synonyms) {
         this.synonyms = String.join(", ", synonyms);
     }

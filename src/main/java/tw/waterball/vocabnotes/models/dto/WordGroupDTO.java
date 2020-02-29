@@ -20,4 +20,5 @@ public class WordGroupDTO {
     public static WordGroupDTO project(WordGroup wordGroup) {
         return new WordGroupDTO(wordGroup.getId(), wordGroup.getTitle(), wordGroup.getWords());
     }
+
 }
