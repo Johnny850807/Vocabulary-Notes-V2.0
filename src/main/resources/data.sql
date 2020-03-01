@@ -1,5 +1,5 @@
 INSERT INTO member (id, first_name, last_name, age, email, password, role)
-VALUES (1, 'Johnny', 'Pan', 23, 'johnny850807@gmail.com', 'hashed', 'MEMBER');
+VALUES (1, 'Johnny', 'Pan', 23, 'johnny850807@gmail.com', '12345678', 'MEMBER');
 
 INSERT INTO dictionary (id, title, description, type, owner_id)
 VALUES (1, 'TOEIC Level 1', 'The Toeic basic dictionary.', 'OWN', 1);

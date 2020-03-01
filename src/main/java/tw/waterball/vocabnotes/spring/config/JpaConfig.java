@@ -55,13 +55,5 @@ public class JpaConfig {
                 .build();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public DataSource embeddedDatabase() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
-    }
-
 
 }

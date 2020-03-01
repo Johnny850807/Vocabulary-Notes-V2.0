@@ -18,10 +18,12 @@ package tw.waterball.vocabnotes.services.token;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -33,13 +35,26 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JwtTokenService implements TokenService {
     private final static Date DEFAULT_EXPIRATION = new Date(TimeUnit.HOURS.toMillis(1));
-    private final static String secret;
-    private static final SecretKey key;
+    private final static String DEFAULT_SECRET;
+    private final SecretKey key;
+    private final Date expiration;
 
     static {
         ResourceBundle properties = ResourceBundle.getBundle("secret", Locale.getDefault());
-        secret = properties.getString("jwt.secret");
-        key = Keys.hmacShaKeyFor(secret.getBytes());
+        DEFAULT_SECRET = properties.getString("jwt.secret");
+    }
+
+    public JwtTokenService() {
+        this(DEFAULT_SECRET, DEFAULT_EXPIRATION);
+    }
+
+    public JwtTokenService(String secret) {
+        this(secret, DEFAULT_EXPIRATION);
+    }
+
+    public JwtTokenService(String secret, Date expiration) {
+        key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes());
+        this.expiration = expiration;
     }
 
     @Override
@@ -61,25 +76,37 @@ public class JwtTokenService implements TokenService {
         return createToken(jwt.getClaim());
     }
 
-    private JwtToken parse(String token) throws JwtException {
-        Jwt<Header, Claims> jwt = Jwts.parserBuilder()
+    @Override
+    public JwtToken parse(String token) throws JwtException {
+        Jwt jwt = Jwts.parserBuilder()
                 .setSigningKey(key)
-                .build().parseClaimsJwt(token);
+                .build().parseClaimsJws(token);
 
-        int memberId = (int) jwt.getBody().get(TokenClaim.MEMBER_ID);
-        Member.Role role = Member.Role.valueOf(String.valueOf(jwt.getBody().get(TokenClaim.ROLE)));
-        return new JwtTokenImpl(jwt.getBody().getExpiration(),
+        Claims claims = (Claims) jwt.getBody();
+
+        int memberId = Integer.parseInt((String) claims.get(TokenClaim.MEMBER_ID));
+        Member.Role role = Member.Role.valueOf(String.valueOf(claims.get(TokenClaim.ROLE)));
+        return new JwtTokenImpl(claims.getExpiration(),
                 new TokenClaim(role, memberId));
     }
 
+    private String compact(Date expirationDate, TokenClaim tokenClaim) {
+        return Jwts.builder()
+                .setExpiration(expirationDate)
+                .setClaims(tokenClaim.getClaimMap())
+                .signWith(key).compact();
+    }
 
-    private static class JwtTokenImpl implements JwtToken {
+    @EqualsAndHashCode
+    private class JwtTokenImpl implements JwtToken {
         private final Date expirationDate;
         private TokenClaim tokenClaim;
+        private String compact;
 
         public JwtTokenImpl(Date expirationDate, TokenClaim tokenClaim) {
             this.expirationDate = expirationDate;
             this.tokenClaim = tokenClaim;
+            this.compact = compact(expirationDate, tokenClaim);
         }
 
         @Override
@@ -99,10 +126,7 @@ public class JwtTokenService implements TokenService {
 
         @Override
         public String toString() {
-            return Jwts.builder()
-                    .setExpiration(getExpirationTime())
-                    .setClaims(getClaim().getClaimMap())
-                    .signWith(key).compact();
+            return compact;
         }
     }
 }

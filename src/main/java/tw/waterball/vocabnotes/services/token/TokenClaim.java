@@ -18,6 +18,7 @@ package tw.waterball.vocabnotes.services.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Map;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Data
+@EqualsAndHashCode
 @AllArgsConstructor
 public class TokenClaim implements TokenService.Params {
     public final static String MEMBER_ID = "memberId";

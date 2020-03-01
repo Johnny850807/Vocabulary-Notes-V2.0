@@ -16,6 +16,8 @@
 
 package tw.waterball.vocabnotes.services.token;
 
+import io.jsonwebtoken.JwtException;
+
 import java.util.Date;
 
 /**
@@ -25,6 +27,8 @@ public interface TokenService {
     Date getDefaultExpirationTime();
     Token createToken(Params params);
     Token renewToken(String token);
+
+    JwtToken parse(String token) throws JwtException;
 
 
     interface Token {
