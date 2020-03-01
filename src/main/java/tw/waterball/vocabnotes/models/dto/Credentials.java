@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 /**
@@ -27,7 +28,7 @@ import javax.validation.constraints.Size;
  */
 @Data @AllArgsConstructor @NoArgsConstructor
 public class Credentials {
-    // TODO email validate
+    @Email
     @Size(min = 1, max = 30)
     private String email;
 

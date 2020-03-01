@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@RequestMapping("/api/public")
+@RequestMapping(ApiPrefix.URL_PREFIX+"/public")
 @RestController
 public class PublicVocabController {
     private final DictionaryService dictionaryService;

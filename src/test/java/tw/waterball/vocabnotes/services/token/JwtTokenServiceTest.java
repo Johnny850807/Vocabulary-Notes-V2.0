@@ -1,6 +1,12 @@
 package tw.waterball.vocabnotes.services.token;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tw.waterball.vocabnotes.VocabNotesApplication;
+import tw.waterball.vocabnotes.api.MemberController;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import static org.junit.jupiter.api.Assertions.*;

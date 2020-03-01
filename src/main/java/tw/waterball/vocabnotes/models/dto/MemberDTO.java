@@ -19,6 +19,7 @@ package tw.waterball.vocabnotes.models.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.validation.constraints.*;
@@ -26,21 +27,23 @@ import javax.validation.constraints.*;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Data @AllArgsConstructor @NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberDTO {
     private Integer id;
 
-    @Size(min = 1, max=18)
+    @Size(min = 1, max = 18)
     private String firstName;
 
-    @Size(min = 1, max=18)
+    @Size(min = 1, max = 18)
     private String lastName;
 
-    @Min(1) @Max(150)
+    @Range(min = 1, max = 150)
     private int age;
 
     @Email
-    @Size(max=30)
+    @Size(max = 30)
     private String email;
 
     private int exp = 0;

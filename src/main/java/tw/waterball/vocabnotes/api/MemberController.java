@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@RequestMapping(value = "/api/members", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = ApiPrefix.URL_PREFIX+"/members", produces = "application/json;charset=UTF-8")
 @RestController
 public class MemberController {
     private TokenService tokenService;
