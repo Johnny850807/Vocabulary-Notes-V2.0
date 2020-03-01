@@ -18,20 +18,12 @@ package tw.waterball.vocabnotes.models.repositories;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.transaction.TestTransaction;
-import tw.waterball.vocabnotes.BaseSpringTest;
-import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.utils.RandomEntityGenerator;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
