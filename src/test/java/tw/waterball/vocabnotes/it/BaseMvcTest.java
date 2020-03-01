@@ -19,9 +19,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.api.MemberController;
 
+import javax.transaction.Transactional;
+
 @ExtendWith(SpringExtension.class)
 @AutoConfigureTestEntityManager
 @ContextConfiguration(classes = VocabNotesApplication.class)
+@Transactional
 public abstract class BaseMvcTest {
     @Autowired
     protected TestEntityManager em;

@@ -32,6 +32,7 @@ import tw.waterball.vocabnotes.services.exceptions.PasswordNotCorrectException;
 import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import java.util.List;
  * @author johnny850807@gmail.com (Waterball))
  */
 @Service
+@Transactional
 public class StandardMemberService implements MemberService {
     private MemberRepository memberRepository;
     private DictionaryRepository dictionaryRepository;
