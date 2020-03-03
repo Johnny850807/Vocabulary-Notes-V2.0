@@ -54,21 +54,18 @@ public class StandardDictionaryService implements DictionaryService {
     }
 
     @Override
-    public Dictionary createPublicDictionary(Requests.CreateDictionary request) {
+    public DictionaryDTO createPublicDictionary(Requests.CreateDictionary request) {
         Dictionary dict = dictionaryRepository.save(Dictionary.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .type(Dictionary.Type.PUBLIC).build());
-        return dict;
+        return dict.toDTO();
     }
-
-
 
     @Override
-    public Dictionary getDictionary(int dictionaryId) {
-        return findDictionaryOrThrowNotFound(dictionaryId);
+    public DictionaryDTO getDictionary(int dictionaryId) {
+        return findDictionaryOrThrowNotFound(dictionaryId).toDTO();
     }
-
 
     @Override
     @SuppressWarnings("Duplicates")

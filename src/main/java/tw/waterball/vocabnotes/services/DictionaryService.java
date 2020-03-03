@@ -18,7 +18,6 @@ package tw.waterball.vocabnotes.services;
 
 import tw.waterball.vocabnotes.api.Requests;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
 
 import java.util.List;
 
@@ -29,9 +28,9 @@ public interface DictionaryService {
 
     void modifyDictionary(int dictionaryId, Requests.ModifyDictionary request);
 
-    Dictionary createPublicDictionary(Requests.CreateDictionary request);
+    DictionaryDTO createPublicDictionary(Requests.CreateDictionary request);
 
-    Dictionary getDictionary(int dictionaryId);
+    DictionaryDTO getDictionary(int dictionaryId);
 
     default List<DictionaryDTO> getPublicDictionaries() {
         return getPublicDictionaries(0, Integer.MAX_VALUE);

@@ -107,7 +107,7 @@ public class MemberController {
      * This api is equivalent to /api/dictionaries/{dictionaryId}
      */
     @GetMapping("/{memberId}/own/dictionaries/{dictionaryId}")
-    public Dictionary getOwnDictionary(@PathVariable int memberId,
+    public DictionaryDTO getOwnDictionary(@PathVariable int memberId,
                                        @PathVariable int dictionaryId) {
         return dictionaryService.getDictionary(dictionaryId);
     }

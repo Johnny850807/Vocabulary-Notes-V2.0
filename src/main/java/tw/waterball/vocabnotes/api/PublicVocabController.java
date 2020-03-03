@@ -50,7 +50,7 @@ public class PublicVocabController {
     }
 
     @GetMapping("/dictionaries/{id}")
-    public Dictionary getDictionary(@PathVariable int id) {
+    public DictionaryDTO getDictionary(@PathVariable int id) {
         return dictionaryService.getDictionary(id);
     }
 
@@ -72,7 +72,7 @@ public class PublicVocabController {
     }
 
     @PostMapping("/dictionaries")
-    public Dictionary createDictionary(@RequestBody @Valid Requests.CreateDictionary request) {
+    public DictionaryDTO createDictionary(@RequestBody @Valid Requests.CreateDictionary request) {
         return dictionaryService.createPublicDictionary(request);
     }
 

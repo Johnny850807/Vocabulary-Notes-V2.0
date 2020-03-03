@@ -79,7 +79,10 @@ public class Dictionary implements IdEntity {
     }
 
     public DictionaryDTO toDTO() {
-        return DictionaryDTO.project(this);
+        return new DictionaryDTO(getId(), getTitle(),
+                getDescription(),
+                getOwner() == null ? null : getOwner().getId(),
+                getType());
     }
 
 }

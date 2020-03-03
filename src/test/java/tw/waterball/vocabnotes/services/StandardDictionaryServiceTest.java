@@ -53,14 +53,14 @@ class StandardDictionaryServiceTest extends BaseSpringTest {
     @Test
     void createPublicDictionary() {
         DictionaryDTO created = dictionaryService.createPublicDictionary(
-                new Requests.CreateDictionary("title", "descritpion")).toDTO();
+                new Requests.CreateDictionary("title", "descritpion"));
         commitAndRestartTransaction();
         assertEquals(em.find(Dictionary.class, created.getId()).toDTO(), created);
     }
 
     @Test
     void getDictionary() {
-        DictionaryDTO dictionaryDTO = dictionaryService.getDictionary(1).toDTO();
+        DictionaryDTO dictionaryDTO = dictionaryService.getDictionary(1);
         assertEquals(em.find(Dictionary.class, 1).toDTO(), dictionaryDTO);
     }
 
