@@ -54,7 +54,7 @@ public class MemberController {
 
     @PostMapping("/tokens")
     public Responses.TokenResponse createToken(@RequestBody @Valid Credentials credentials) {
-        Member member = memberService.login(credentials);
+        MemberDTO member = memberService.login(credentials);
         TokenService.Token renewedToken = tokenService.createToken(
                 new TokenClaim(member.getRole(), member.getId()));
         return new Responses.TokenResponse(renewedToken.toString(),
@@ -70,7 +70,7 @@ public class MemberController {
 
     @PostMapping
     public Responses.TokenResponse createMember(@RequestBody @Valid Requests.RegisterMember request) {
-        Member member = memberService.createMember(request);
+        MemberDTO member = memberService.createMember(request);
         return createTokenResponse(member.getRole(), member.getId());
     }
 
@@ -81,7 +81,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}")
-    public Member getMember(@PathVariable int memberId) {
+    public MemberDTO getMember(@PathVariable int memberId) {
         return memberService.getMember(memberId);
     }
 
@@ -100,7 +100,7 @@ public class MemberController {
 
     @PostMapping("/{memberId}/own/dictionaries")
     public DictionaryDTO createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.CreateDictionary request) {
-        return memberService.createOwnDictionary(memberId, request).toDTO();
+        return memberService.createOwnDictionary(memberId, request);
     }
 
     /**

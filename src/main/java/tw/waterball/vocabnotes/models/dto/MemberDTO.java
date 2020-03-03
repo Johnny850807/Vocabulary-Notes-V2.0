@@ -52,9 +52,4 @@ public class MemberDTO {
     @NotNull
     private Member.Role role;
 
-    public static MemberDTO project(Member m) {
-        return new MemberDTO(m.getId(), m.getFirstName(), m.getLastName(),
-                m.getAge(), m.getEmail(), m.getExp(), m.getLevel(), m.getRole());
-    }
-
 }

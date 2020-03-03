@@ -25,6 +25,7 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Range;
 import tw.waterball.vocabnotes.models.Level;
 import tw.waterball.vocabnotes.models.dto.MemberDTO;
+import tw.waterball.vocabnotes.models.dto.MemberWithDictionariesDTO;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.*;
 
@@ -125,6 +127,19 @@ public class Member implements IdEntity {
     }
 
     public MemberDTO toDTO() {
-        return MemberDTO.project(this);
+        return new MemberDTO(getId(), getFirstName(), getLastName(),
+                getAge(), getEmail(), getExp(), getLevel(), getRole());
+
+    }
+
+
+    public MemberWithDictionariesDTO toDTO(boolean includeOwnDictionaries, boolean includeFavDictionaries) {
+        return new MemberWithDictionariesDTO(getId(), getFirstName(), getLastName(),
+                getAge(), getEmail(), getExp(), getLevel(), getRole(),
+                includeOwnDictionaries ?
+                        ownDictionaries.stream().map(Dictionary::toDTO).collect(Collectors.toList()) : null,
+                includeFavDictionaries ?
+                        favoriteDictionaries.stream().map(Dictionary::toDTO).collect(Collectors.toSet()) : null);
+
     }
 }

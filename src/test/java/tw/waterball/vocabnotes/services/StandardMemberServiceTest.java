@@ -25,9 +25,7 @@ import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.models.dto.Credentials;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberDTO;
+import tw.waterball.vocabnotes.models.dto.*;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
@@ -36,8 +34,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author johnny850807 (Waterball)
@@ -62,17 +59,17 @@ class StandardMemberServiceTest extends BaseSpringTest {
     void testCreateThenGetMember() {
         MemberDTO memberDTO = memberService.createMember(new Requests.RegisterMember(
                 new Requests.CreateMember("firstName", "lastName", 1),
-                new Credentials("email@email.com", "password"))).toDTO();
+                new Credentials("email@email.com", "password")));
 
         commitAndRestartTransaction();
 
-        MemberDTO memberGot = memberService.getMember(memberDTO.getId()).toDTO();
+        MemberDTO memberGot = memberService.getMember(memberDTO.getId());
         assertEquals(memberDTO, memberGot);
     }
 
     @Test
     void testLoginMember() {
-        MemberDTO memberLogin = memberService.login(stubMember.getEmail(), stubPassword).toDTO();
+        MemberDTO memberLogin = memberService.login(stubMember.getEmail(), stubPassword);
         assertEquals(stubMember, memberLogin);
     }
 
@@ -83,7 +80,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
 
         commitAndRestartTransaction();
 
-        MemberDTO updatedMember = memberService.getMember(stubMember.getId()).toDTO();
+        MemberDTO updatedMember = memberService.getMember(stubMember.getId());
         assertEquals(stubMember.getId(), updatedMember.getId());
         assertEquals("update", updatedMember.getFirstName());
         assertEquals("update", updatedMember.getLastName());
@@ -93,55 +90,43 @@ class StandardMemberServiceTest extends BaseSpringTest {
     @Test
     void createOwnDictionary() {
         DictionaryDTO dictionaryDTO = memberService.createOwnDictionary(stubMember.getId(),
-                new Requests.CreateDictionary("title", "description")).toDTO();
+                new Requests.CreateDictionary("title", "description"));
 
         commitAndRestartTransaction();
 
-        Member member = memberService.getMember(stubMember.getId());
-        List<Dictionary> dictionaries = member.getOwnDictionaries();
-        assertEquals(2, dictionaries.size());
-
-        assertTrue(dictionaries.stream().anyMatch(d -> d.getId().equals(dictionaryDTO.getId())));
+        assertEquals(getOwnDictionaryFromEM(stubMember.getId(), dictionaryDTO.getId()),
+                dictionaryDTO);
     }
 
     @Test
     void referenceWordGroup() {
-        int wordGroupId = (int) em.persistAndGetId(new WordGroup());
-        memberService.referenceWordGroup(stubMember.getId(), 1, wordGroupId);
+        WordGroupDTO wordGroup = em.persistAndFlush(new WordGroup()).toDTO();
+        memberService.referenceWordGroup(stubMember.getId(), 1, wordGroup.getId());
         commitAndRestartTransaction();
-
-        List<WordGroup> wordGroups = getWordGroupsByDictionaryId(1);
-        assertEquals(2, wordGroups.size());
-        assertTrue(wordGroups.stream().anyMatch(wg -> wg.getId() == wordGroupId));
+        assertEquals(getWordGroupsFromEM(1, wordGroup.getId()), wordGroup);
     }
 
     @Test
     void removeWordGroupReference() {
         memberService.removeWordGroupReference(stubMember.getId(), 1, 1);
-
-        List<WordGroup> wordGroups = getWordGroupsByDictionaryId(1);
-        assertTrue(wordGroups.isEmpty());
+        commitAndRestartTransaction();
+        assertNull(getWordGroupsFromEM(1, 1));
     }
 
     @Test
     void favoriteDictionary() {
-        int dictionaryId = (int) em.persistAndGetId(new Dictionary("title", "description", Dictionary.Type.PUBLIC));
-        memberService.favoriteDictionary(1, dictionaryId);
+        DictionaryDTO dictionary = em.persistAndFlush(new Dictionary("title", "description", Dictionary.Type.PUBLIC)).toDTO();
+        memberService.favoriteDictionary(stubMember.getId(), dictionary.getId());
         commitAndRestartTransaction();
-
-        Member member = memberService.getMember(stubMember.getId());
-        Set<Dictionary> fav = member.getFavoriteDictionaries();
-        assertEquals(2, fav.size());
-        assertTrue(fav.stream().anyMatch(d -> d.getId() == dictionaryId));
+        assertEquals(getFavDictionaryFromEM(stubMember.getId(), dictionary.getId()),
+                dictionary);
     }
+
     @Test
     void removeFavoriteDictionary() {
         memberService.removeFavoriteDictionary(1, 1);
         commitAndRestartTransaction();
-
-        Member member = memberService.getMember(stubMember.getId());
-        Set<Dictionary> fav = member.getFavoriteDictionaries();
-        assertTrue(fav.isEmpty());
+        assertNull(getFavDictionaryFromEM(stubMember.getId(), 1));
     }
 
     @Test
@@ -155,15 +140,35 @@ class StandardMemberServiceTest extends BaseSpringTest {
     void deleteOwnDictionary() {
         memberService.deleteOwnDictionary(stubMember.getId(),  1);
         commitAndRestartTransaction();
-
-        Member member = memberService.getMember(stubMember.getId());
-        assertTrue(member.getOwnDictionaries().isEmpty());
+        assertNull(getOwnDictionaryFromEM(stubMember.getId(), 1));
     }
 
-    private List<WordGroup> getWordGroupsByDictionaryId(int dictionaryId) {
-        return em.getEntityManager().createQuery(
+    private DictionaryDTO getFavDictionaryFromEM(int memberId, int dictionaryId) {
+        List<Dictionary> result = em.getEntityManager().createQuery("SELECT d FROM Member m JOIN m.favoriteDictionaries d " +
+                "WHERE m.id = ?1 and d.id = ?2", Dictionary.class)
+                .setParameter(1, memberId)
+                .setParameter(2, dictionaryId)
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0).toDTO();
+    }
+
+    private DictionaryDTO getOwnDictionaryFromEM(int memberId, int dictionaryId) {
+        List<Dictionary> result = em.getEntityManager().createQuery("SELECT d FROM Member m JOIN m.ownDictionaries d " +
+                "WHERE m.id = ?1 and d.id = ?2", Dictionary.class)
+                .setParameter(1, memberId)
+                .setParameter(2, dictionaryId)
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0).toDTO();
+    }
+
+
+    private WordGroupDTO getWordGroupsFromEM(int dictionaryId, int wordGroupId) {
+        List<WordGroup> result = em.getEntityManager().createQuery(
                 "SELECT wg FROM Dictionary d JOIN d.wordGroups wg " +
-                        "WHERE d.id = ?1", WordGroup.class)
-                .setParameter(1, dictionaryId).getResultList();
+                "WHERE d.id = ?1 and wg.id = ?2", WordGroup.class)
+                .setParameter(1, dictionaryId)
+                .setParameter(2, wordGroupId)
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0).toDTO();
     }
 }
