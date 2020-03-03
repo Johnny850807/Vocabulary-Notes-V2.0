@@ -19,6 +19,7 @@ package tw.waterball.vocabnotes.services;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.WordGroupRepository;
@@ -27,6 +28,7 @@ import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
@@ -46,19 +48,18 @@ public class StandardWordGroupService implements WordGroupService {
     }
 
     @Override
-    public WordGroup getWordGroup(int wordGroupId) {
-        return wordGroupRepository.findById(wordGroupId)
-                .orElseThrow(() -> new ResourceNotFoundException("word group", wordGroupId));
+    public WordGroupDTO getWordGroup(int wordGroupId) {
+        return findWordGroupOrThrowNotFound(wordGroupId).toDTO();
     }
 
     @Override
-    public WordGroup createWordGroup(WordGroup wordGroup) {
-        return wordGroupRepository.save(wordGroup);
+    public WordGroupDTO createWordGroup(WordGroup wordGroup) {
+        return wordGroupRepository.save(wordGroup).toDTO();
     }
 
     @Override
     public void patchWordGroup(int wordGroupId, String title) {
-        WordGroup wordGroup = getWordGroup(wordGroupId);
+        WordGroup wordGroup = findWordGroupOrThrowNotFound(wordGroupId);
         wordGroup.setTitle(title);
         wordGroupRepository.save(wordGroup);
     }
@@ -71,7 +72,7 @@ public class StandardWordGroupService implements WordGroupService {
 
     @Override
     public void addWordIntoWordGroup(String wordName, int wordGroupId) {
-        WordGroup wordGroup = getWordGroup(wordGroupId);
+        WordGroup wordGroup = findWordGroupOrThrowNotFound(wordGroupId);
         Word word = wordService.getWord(wordName);
         wordGroup.addWord(word);
         wordGroupRepository.save(wordGroup);
@@ -79,20 +80,26 @@ public class StandardWordGroupService implements WordGroupService {
 
     @Override
     public void removeWordFromWordGroup(String wordName, int wordGroupId) {
-        WordGroup wordGroup = getWordGroup(wordGroupId);
+        WordGroup wordGroup = findWordGroupOrThrowNotFound(wordGroupId);
         Word word = wordService.getWord(wordName);
         wordGroup.removeWord(word);
         wordGroupRepository.save(wordGroup);
     }
 
     @Override
-    public List<WordGroup> getWordGroups(int dictionaryId, @Nullable Integer offset, @Nullable Integer limit) {
+    public List<WordGroupDTO> getWordGroups(int dictionaryId, @Nullable Integer offset, @Nullable Integer limit) {
         offset = offset == null ? 0 : offset;
         limit = limit == null ? Integer.MAX_VALUE : limit;
         if (limit == 0) {
             return Collections.emptyList();
         }
-        return wordGroupRepository.findWordGroupsFromDictionary(dictionaryId, offset, limit);
+        return wordGroupRepository.findWordGroupsFromDictionary(dictionaryId, offset, limit)
+                .stream().map(WordGroup::toDTO).collect(Collectors.toList());
+    }
+
+    private WordGroup findWordGroupOrThrowNotFound(int wordGroupId) {
+        return wordGroupRepository.findById(wordGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("word group", wordGroupId));
     }
 
 }

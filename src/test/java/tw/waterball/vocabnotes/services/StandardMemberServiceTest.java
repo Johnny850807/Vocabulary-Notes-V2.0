@@ -88,7 +88,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void createOwnDictionary() {
+    void testCreateOwnDictionary() {
         DictionaryDTO dictionaryDTO = memberService.createOwnDictionary(stubMember.getId(),
                 new Requests.CreateDictionary("title", "description"));
 
@@ -99,7 +99,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void referenceWordGroup() {
+    void testReferenceWordGroup() {
         WordGroupDTO wordGroup = em.persistAndFlush(new WordGroup()).toDTO();
         memberService.referenceWordGroup(stubMember.getId(), 1, wordGroup.getId());
         commitAndRestartTransaction();
@@ -107,14 +107,14 @@ class StandardMemberServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void removeWordGroupReference() {
+    void testRemoveWordGroupReference() {
         memberService.removeWordGroupReference(stubMember.getId(), 1, 1);
         commitAndRestartTransaction();
         assertNull(getWordGroupsFromEM(1, 1));
     }
 
     @Test
-    void favoriteDictionary() {
+    void testFavoriteDictionary() {
         DictionaryDTO dictionary = em.persistAndFlush(new Dictionary("title", "description", Dictionary.Type.PUBLIC)).toDTO();
         memberService.favoriteDictionary(stubMember.getId(), dictionary.getId());
         commitAndRestartTransaction();
@@ -123,21 +123,21 @@ class StandardMemberServiceTest extends BaseSpringTest {
     }
 
     @Test
-    void removeFavoriteDictionary() {
+    void testRemoveFavoriteDictionary() {
         memberService.removeFavoriteDictionary(1, 1);
         commitAndRestartTransaction();
         assertNull(getFavDictionaryFromEM(stubMember.getId(), 1));
     }
 
     @Test
-    void getOwnDictionaries() {
+    void testGetOwnDictionaries() {
         List<DictionaryDTO> dictionaries = memberService.getOwnDictionaries(stubMember.getId());
         assertEquals(1, dictionaries.size());
         assertEquals(1, dictionaries.iterator().next().getId());
     }
 
     @Test
-    void deleteOwnDictionary() {
+    void testDeleteOwnDictionary() {
         memberService.deleteOwnDictionary(stubMember.getId(),  1);
         commitAndRestartTransaction();
         assertNull(getOwnDictionaryFromEM(stubMember.getId(), 1));

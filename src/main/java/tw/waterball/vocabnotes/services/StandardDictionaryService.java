@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.api.Requests;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.DictionaryRepository;
+import tw.waterball.vocabnotes.models.repositories.WordGroupRepository;
 import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 
 import javax.transaction.Transactional;
@@ -35,13 +37,13 @@ import java.util.List;
 @Service
 @Transactional
 public class StandardDictionaryService implements DictionaryService {
-    private WordGroupService wordGroupService;
+    private WordGroupRepository wordGroupRepository;
     private DictionaryRepository dictionaryRepository;
 
     @Autowired
-    public StandardDictionaryService(WordGroupService wordGroupService,
+    public StandardDictionaryService(WordGroupRepository wordGroupRepository,
                                      DictionaryRepository dictionaryRepository) {
-        this.wordGroupService = wordGroupService;
+        this.wordGroupRepository = wordGroupRepository;
         this.dictionaryRepository = dictionaryRepository;
     }
 
@@ -88,7 +90,7 @@ public class StandardDictionaryService implements DictionaryService {
     @Override
     public void removeWordGroupFromDictionary(int wordGroupId, int dictionaryId) {
         Dictionary dictionary = findDictionaryOrThrowNotFound(dictionaryId);
-        WordGroup wordGroup = wordGroupService.getWordGroup(wordGroupId);
+        WordGroup wordGroup = findWordGroupOrThrowNotFound(wordGroupId);
         dictionary.removeWordGroup(wordGroup);
         dictionaryRepository.save(dictionary);
     }
@@ -96,7 +98,7 @@ public class StandardDictionaryService implements DictionaryService {
     @Override
     public void addWordGroupIntoDictionary(int wordGroupId, int dictionaryId) {
         Dictionary dictionary = findDictionaryOrThrowNotFound(dictionaryId);
-        WordGroup wordGroup =  wordGroupService.getWordGroup(wordGroupId);
+        WordGroup wordGroup =  findWordGroupOrThrowNotFound(wordGroupId);
         dictionary.addWordGroup(wordGroup);
         dictionaryRepository.save(dictionary);
     }
@@ -104,5 +106,11 @@ public class StandardDictionaryService implements DictionaryService {
     private Dictionary findDictionaryOrThrowNotFound(int dictionaryId) {
         return dictionaryRepository.findById(dictionaryId)
                 .orElseThrow(() -> new ResourceNotFoundException("dictionary", dictionaryId));
+    }
+
+
+    private WordGroup findWordGroupOrThrowNotFound(int wordGroupId) {
+        return wordGroupRepository.findById(wordGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("word group", wordGroupId));
     }
 }

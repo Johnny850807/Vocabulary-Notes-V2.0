@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
@@ -77,7 +78,7 @@ public class PublicVocabController {
     }
 
     @GetMapping("/wordgroups/{id}")
-    public WordGroup getWordGroup(@PathVariable int id) {
+    public WordGroupDTO getWordGroup(@PathVariable int id) {
         return wordGroupService.getWordGroup(id);
     }
 
@@ -156,7 +157,7 @@ public class PublicVocabController {
     }
 
     @GetMapping("/dictionaries/{dictionaryId}/wordgroups")
-    public List<WordGroup> getWordGroups(@PathVariable int dictionaryId,
+    public List<WordGroupDTO> getWordGroups(@PathVariable int dictionaryId,
                                          @RequestParam(required = false) Integer offset,
                                          @RequestParam(required = false) Integer limit) {
         return wordGroupService.getWordGroups(dictionaryId, offset, limit);

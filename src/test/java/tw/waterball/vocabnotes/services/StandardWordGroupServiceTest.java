@@ -8,6 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
+import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
@@ -32,16 +33,16 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
 
     @Test
     void testGetWordGroup() {
-        WordGroup expected = em.find(WordGroup.class, 1);
-        assertEntityEquals(expected, wordGroupService.getWordGroup(1));
+        WordGroupDTO expected = em.find(WordGroup.class, 1).toDTO();
+        assertEquals(expected, wordGroupService.getWordGroup(1));
     }
 
     @Test
     void testCreateWordGroup() {
-        WordGroup created = em.persistAndFlush(new WordGroup());
+        WordGroupDTO created = em.persistAndFlush(new WordGroup()).toDTO();
         commitAndRestartTransaction();
 
-        assertEntityEquals(created, wordGroupService.getWordGroup(created.getId()));
+        assertEquals(created, wordGroupService.getWordGroup(created.getId()));
     }
 
     @Test
@@ -87,7 +88,7 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
 
     @Test
     void testGetWordGroups() {
-        List<WordGroup> wordGroups = wordGroupService.getWordGroups(1);
-        assertEntityEquals(em.find(WordGroup.class, 1), wordGroups.get(0));
+        List<WordGroupDTO> wordGroups = wordGroupService.getWordGroups(1);
+        assertEquals(em.find(WordGroup.class, 1).toDTO(), wordGroups.get(0));
     }
 }
