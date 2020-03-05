@@ -14,24 +14,24 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.dto;
+package tw.waterball.vocabnotes.services.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
-
-import java.lang.ref.WeakReference;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
+public final class Responses {
+    private Responses() { }
 
-@Data @AllArgsConstructor @NoArgsConstructor
-public class DictionaryDTO {
-    private Integer id;
-    private String title;
-    private String description;
-    private Integer ownerId;
-    private Dictionary.Type type;
+    @Data @AllArgsConstructor @NoArgsConstructor
+    public static class TokenResponse {
+        private String token;
+        private long expired;
+        private int memberId;
+    }
+
+
 }

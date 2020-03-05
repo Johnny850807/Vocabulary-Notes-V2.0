@@ -14,42 +14,29 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.dto;
+package tw.waterball.vocabnotes.services.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Range;
-import tw.waterball.vocabnotes.models.entities.Member;
-
-import javax.validation.constraints.*;
+import tw.waterball.vocabnotes.models.entities.Dictionary;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class MemberDTO {
+
+@Data @AllArgsConstructor @NoArgsConstructor
+public class DictionaryDTO {
     private Integer id;
+    private String title;
+    private String description;
+    private Integer ownerId;
+    private Dictionary.Type type;
 
-    @Size(min = 1, max = 18)
-    private String firstName;
-
-    @Size(min = 1, max = 18)
-    private String lastName;
-
-    @Range(min = 1, max = 150)
-    private int age;
-
-    @Email
-    @Size(max = 30)
-    private String email;
-
-    private int exp = 0;
-    private int level = 1;
-
-    @NotNull
-    private Member.Role role;
-
+    public static DictionaryDTO project(Dictionary d) {
+        return  new DictionaryDTO(d.getId(), d.getTitle(),
+                d.getDescription(),
+                d.getOwner() == null ? null : d.getOwner().getId(),
+                d.getType());
+    }
 }

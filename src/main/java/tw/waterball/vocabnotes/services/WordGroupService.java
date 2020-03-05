@@ -17,7 +17,7 @@
 package tw.waterball.vocabnotes.services;
 
 import org.jetbrains.annotations.Nullable;
-import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
+import tw.waterball.vocabnotes.services.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
 import java.util.List;

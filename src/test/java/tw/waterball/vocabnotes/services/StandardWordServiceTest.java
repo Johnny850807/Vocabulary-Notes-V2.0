@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
 import tw.waterball.vocabnotes.models.entities.Word;
+import tw.waterball.vocabnotes.services.dto.WordDTO;
 
 import javax.transaction.Transactional;
 
@@ -73,6 +74,7 @@ class StandardWordServiceTest extends BaseSpringTest {
 
     @Test
     void testGetWord() {
-        assertEntityEquals(em.find(Word.class, 1), wordService.getWord("lease"));
+        assertEquals(WordDTO.project(em.find(Word.class, 1)),
+                wordService.getWord("lease"));
     }
 }

@@ -14,24 +14,41 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.models.dto;
+package tw.waterball.vocabnotes.services.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
+import tw.waterball.vocabnotes.models.entities.Member;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-@Data @AllArgsConstructor @NoArgsConstructor
-public class Credentials {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class MemberDTO {
+    private Integer id;
+    private String firstName;
+    private String lastName;
+    private int age;
+
     @Email
-    @Size(min = 1, max = 30)
+    @Size(max = 30)
     private String email;
 
-    @Size(min = 8, max = 20)
-    private String password;
+    private int exp = 0;
+    private int level = 1;
+
+    @NotNull
+    private Member.Role role;
+
+    public static MemberDTO project(Member m) {
+        return new MemberDTO(m.getId(), m.getFirstName(), m.getLastName(),
+                m.getAge(), m.getEmail(), m.getExp(), m.getLevel(), m.getRole());
+    }
+
 }

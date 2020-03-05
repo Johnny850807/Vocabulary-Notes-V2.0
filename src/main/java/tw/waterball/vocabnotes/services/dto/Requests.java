@@ -14,88 +14,58 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.api;
+package tw.waterball.vocabnotes.services.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import tw.waterball.vocabnotes.models.dto.Credentials;
+import lombok.*;
+import org.hibernate.validator.constraints.Range;
+import tw.waterball.vocabnotes.models.Credentials;
 import tw.waterball.vocabnotes.models.entities.Member;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Optional;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
 public final class Requests {
-    private Requests(){}
+    private Requests() { }
 
-    @Data
-    @AllArgsConstructor @NoArgsConstructor
-    public static class CreateDictionary {
-        private String title;
-        private String description;
-    }
-
-    @AllArgsConstructor @NoArgsConstructor
-    @Setter @Accessors(fluent = true)
-    public static class ModifyDictionary {
+    @Data @AllArgsConstructor @NoArgsConstructor
+    public static class DictionaryInfo {
         @Size(min = 1, max = 80)
-        private String title;
+        protected String title;
         @Size(min = 1, max = 300)
-        private String description;
-
-        public Optional<String> getTitle() {
-            return Optional.ofNullable(title);
-        }
-        public Optional<String> getDescription() {
-            return Optional.ofNullable(description);
-        }
+        protected String description;
     }
+
 
     @Data @AllArgsConstructor @NoArgsConstructor
     public static class RegisterMember {
         @Valid
         @NotNull
-        private CreateMember memberCreationInfo;
+        private MemberInfo memberInfo;
         @Valid
         @NotNull
         private Credentials credentials;
 
         public Member toMember() {
-            return new Member(memberCreationInfo.getFirstName(),
-                    memberCreationInfo.getLastName(), memberCreationInfo.getAge(),
+            return new Member(memberInfo.getFirstName(),
+                    memberInfo.getLastName(), memberInfo.getAge(),
                     credentials.getEmail(), credentials.getPassword(),
                     Member.Role.MEMBER);
         }
     }
 
     @Data @AllArgsConstructor @NoArgsConstructor
-    public static class CreateMember {
-        @Size(min = 1, max=18)
-        private String firstName;
-
-        @Size(min = 1, max=18)
-        private String lastName;
-
-        @Min(1) @Max(150)
-        private int age;
-    }
-
-    @Data @AllArgsConstructor @NoArgsConstructor
-    public static class UpdateMember {
+    public static class MemberInfo {
         @Size(min = 1, max = 18)
         private String firstName;
+
         @Size(min = 1, max = 18)
         private String lastName;
-        @Min(1) @Max(150)
+
+        @Range(min = 1, max = 150)
         private int age;
     }
 

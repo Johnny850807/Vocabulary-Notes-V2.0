@@ -24,17 +24,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
-import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.models.dto.*;
+import tw.waterball.vocabnotes.services.dto.Requests;
+import tw.waterball.vocabnotes.models.Credentials;
+import tw.waterball.vocabnotes.services.dto.*;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static tw.waterball.vocabnotes.services.dto.DictionaryDTO.project;
+import static tw.waterball.vocabnotes.services.dto.WordGroupDTO.project;
 
 /**
  * @author johnny850807 (Waterball)
@@ -58,7 +60,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
     @Test
     void testCreateThenGetMember() {
         MemberDTO memberDTO = memberService.createMember(new Requests.RegisterMember(
-                new Requests.CreateMember("firstName", "lastName", 1),
+                new Requests.MemberInfo("firstName", "lastName", 1),
                 new Credentials("email@email.com", "password")));
 
         commitAndRestartTransaction();
@@ -76,7 +78,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
     @Test
     void testUpdateMember() {
         memberService.updateMember(stubMember.getId(),
-                new Requests.UpdateMember("update", "update", 15));
+                new Requests.MemberInfo("update", "update", 15));
 
         commitAndRestartTransaction();
 
@@ -90,7 +92,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
     @Test
     void testCreateOwnDictionary() {
         DictionaryDTO dictionaryDTO = memberService.createOwnDictionary(stubMember.getId(),
-                new Requests.CreateDictionary("title", "description"));
+                new Requests.DictionaryInfo("title", "description"));
 
         commitAndRestartTransaction();
 
@@ -100,7 +102,7 @@ class StandardMemberServiceTest extends BaseSpringTest {
 
     @Test
     void testReferenceWordGroup() {
-        WordGroupDTO wordGroup = em.persistAndFlush(new WordGroup()).toDTO();
+        WordGroupDTO wordGroup = project(em.persistAndFlush(new WordGroup()));
         memberService.referenceWordGroup(stubMember.getId(), 1, wordGroup.getId());
         commitAndRestartTransaction();
         assertEquals(getWordGroupsFromEM(1, wordGroup.getId()), wordGroup);
@@ -115,7 +117,8 @@ class StandardMemberServiceTest extends BaseSpringTest {
 
     @Test
     void testFavoriteDictionary() {
-        DictionaryDTO dictionary = em.persistAndFlush(new Dictionary("title", "description", Dictionary.Type.PUBLIC)).toDTO();
+        DictionaryDTO dictionary = project(em.persistAndFlush(
+                new Dictionary("title", "description", Dictionary.Type.PUBLIC)));
         memberService.favoriteDictionary(stubMember.getId(), dictionary.getId());
         commitAndRestartTransaction();
         assertEquals(getFavDictionaryFromEM(stubMember.getId(), dictionary.getId()),
@@ -149,16 +152,17 @@ class StandardMemberServiceTest extends BaseSpringTest {
                 .setParameter(1, memberId)
                 .setParameter(2, dictionaryId)
                 .getResultList();
-        return result.isEmpty() ? null : result.get(0).toDTO();
+        return result.isEmpty() ? null : project(result.get(0));
     }
 
     private DictionaryDTO getOwnDictionaryFromEM(int memberId, int dictionaryId) {
-        List<Dictionary> result = em.getEntityManager().createQuery("SELECT d FROM Member m JOIN m.ownDictionaries d " +
+        List<Dictionary> result = em.getEntityManager().createQuery(
+                "SELECT d FROM Member m JOIN m.ownDictionaries d " +
                 "WHERE m.id = ?1 and d.id = ?2", Dictionary.class)
                 .setParameter(1, memberId)
                 .setParameter(2, dictionaryId)
                 .getResultList();
-        return result.isEmpty() ? null : result.get(0).toDTO();
+        return result.isEmpty() ? null : project(result.get(0));
     }
 
 
@@ -169,6 +173,6 @@ class StandardMemberServiceTest extends BaseSpringTest {
                 .setParameter(1, dictionaryId)
                 .setParameter(2, wordGroupId)
                 .getResultList();
-        return result.isEmpty() ? null : result.get(0).toDTO();
+        return result.isEmpty() ? null : project(result.get(0));
     }
 }

@@ -19,7 +19,9 @@ package tw.waterball.vocabnotes.services;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
+import tw.waterball.vocabnotes.models.repositories.WordRepository;
+import tw.waterball.vocabnotes.services.dto.WordDTO;
+import tw.waterball.vocabnotes.services.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.WordGroupRepository;
@@ -37,24 +39,24 @@ import java.util.stream.Collectors;
 @Transactional
 @SuppressWarnings("Duplicates")
 public class StandardWordGroupService implements WordGroupService {
-    private WordService wordService;
     private WordGroupRepository wordGroupRepository;
+    private WordRepository wordRepository;
 
     @Autowired
-    public StandardWordGroupService(WordService wordService,
-                                    WordGroupRepository wordGroupRepository) {
-        this.wordService = wordService;
+    public StandardWordGroupService(WordGroupRepository wordGroupRepository,
+                                    WordRepository wordRepository) {
+        this.wordRepository = wordRepository;
         this.wordGroupRepository = wordGroupRepository;
     }
 
     @Override
     public WordGroupDTO getWordGroup(int wordGroupId) {
-        return findWordGroupOrThrowNotFound(wordGroupId).toDTO();
+        return WordGroupDTO.project(findWordGroupOrThrowNotFound(wordGroupId));
     }
 
     @Override
     public WordGroupDTO createWordGroup(WordGroup wordGroup) {
-        return wordGroupRepository.save(wordGroup).toDTO();
+        return WordGroupDTO.project(wordGroupRepository.save(wordGroup));
     }
 
     @Override
@@ -73,7 +75,7 @@ public class StandardWordGroupService implements WordGroupService {
     @Override
     public void addWordIntoWordGroup(String wordName, int wordGroupId) {
         WordGroup wordGroup = findWordGroupOrThrowNotFound(wordGroupId);
-        Word word = wordService.getWord(wordName);
+        Word word = findWordOrThrowNotFound(wordName);
         wordGroup.addWord(word);
         wordGroupRepository.save(wordGroup);
     }
@@ -81,7 +83,7 @@ public class StandardWordGroupService implements WordGroupService {
     @Override
     public void removeWordFromWordGroup(String wordName, int wordGroupId) {
         WordGroup wordGroup = findWordGroupOrThrowNotFound(wordGroupId);
-        Word word = wordService.getWord(wordName);
+        Word word = findWordOrThrowNotFound(wordName);
         wordGroup.removeWord(word);
         wordGroupRepository.save(wordGroup);
     }
@@ -94,7 +96,7 @@ public class StandardWordGroupService implements WordGroupService {
             return Collections.emptyList();
         }
         return wordGroupRepository.findWordGroupsFromDictionary(dictionaryId, offset, limit)
-                .stream().map(WordGroup::toDTO).collect(Collectors.toList());
+                .stream().map(WordGroupDTO::project).collect(Collectors.toList());
     }
 
     private WordGroup findWordGroupOrThrowNotFound(int wordGroupId) {
@@ -102,4 +104,8 @@ public class StandardWordGroupService implements WordGroupService {
                 .orElseThrow(() -> new ResourceNotFoundException("word group", wordGroupId));
     }
 
+    private Word findWordOrThrowNotFound(String wordName) {
+        return wordRepository.findByName(wordName)
+                .orElseThrow(()-> new ResourceNotFoundException("word", wordName));
+    }
 }

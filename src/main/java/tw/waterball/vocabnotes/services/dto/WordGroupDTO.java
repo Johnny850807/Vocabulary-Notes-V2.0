@@ -1,13 +1,11 @@
-package tw.waterball.vocabnotes.models.dto;
+package tw.waterball.vocabnotes.services.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Singular;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 

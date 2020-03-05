@@ -18,15 +18,14 @@ package tw.waterball.vocabnotes.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tw.waterball.vocabnotes.models.dto.Credentials;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberDTO;
-import tw.waterball.vocabnotes.models.entities.Dictionary;
+import tw.waterball.vocabnotes.models.Credentials;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.MemberDTO;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.services.DictionaryService;
 import tw.waterball.vocabnotes.services.MemberService;
-import tw.waterball.vocabnotes.services.StandardMemberService;
-import tw.waterball.vocabnotes.services.token.JwtTokenService;
+import tw.waterball.vocabnotes.services.dto.Requests;
+import tw.waterball.vocabnotes.services.dto.Responses;
 import tw.waterball.vocabnotes.services.token.TokenService;
 import tw.waterball.vocabnotes.services.token.TokenClaim;
 
@@ -87,8 +86,8 @@ public class MemberController {
 
     @PutMapping("/{memberId}")
     public void updateMember(@PathVariable int memberId,
-                             @RequestBody @Valid Requests.UpdateMember request) {
-        memberService.updateMember(memberId, request);
+                             @RequestBody @Valid Requests.MemberInfo memberInfo) {
+        memberService.updateMember(memberId, memberInfo);
     }
 
     @GetMapping("/{memberId}/own/dictionaries")
@@ -99,7 +98,7 @@ public class MemberController {
     }
 
     @PostMapping("/{memberId}/own/dictionaries")
-    public DictionaryDTO createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.CreateDictionary request) {
+    public DictionaryDTO createOwnDictionary(@PathVariable int memberId, @RequestBody Requests.DictionaryInfo request) {
         return memberService.createOwnDictionary(memberId, request);
     }
 

@@ -18,17 +18,13 @@ package tw.waterball.vocabnotes.models.repositories;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.utils.PagingTrigger;
 
 import javax.transaction.Transactional;

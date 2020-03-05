@@ -17,6 +17,7 @@
 package tw.waterball.vocabnotes.services;
 
 import tw.waterball.vocabnotes.models.entities.Word;
+import tw.waterball.vocabnotes.services.dto.WordDTO;
 
 /**
  * @author johnny850807@gmail.com (Waterball))
@@ -26,5 +27,5 @@ public interface WordService {
     void changeImageUrlOfWord(String wordName, String imageUrl);
     void updateWord(Word word);
     void deleteWord(String wordName);
-    Word getWord(String wordName);
+    WordDTO getWord(String wordName);
 }

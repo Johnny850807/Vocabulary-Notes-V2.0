@@ -18,10 +18,10 @@ package tw.waterball.vocabnotes.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberDTO;
-import tw.waterball.vocabnotes.models.dto.MemberWithDictionariesDTO;
+import tw.waterball.vocabnotes.services.dto.Requests;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.MemberDTO;
+import tw.waterball.vocabnotes.services.dto.MemberWithDictionariesDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Member;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
@@ -62,7 +62,7 @@ public class StandardMemberService implements MemberService {
         if (memberRepository.existsByEmail(request.getCredentials().getEmail())) {
             throw new DuplicateEmailException(request.getCredentials().getEmail());
         }
-        return memberRepository.save(request.toMember()).toDTO();
+        return MemberDTO.project(memberRepository.save(request.toMember()));
     }
 
     @Override
@@ -74,23 +74,23 @@ public class StandardMemberService implements MemberService {
             throw new PasswordNotCorrectException(password);
         }
 
-        return member.toDTO();
+        return MemberDTO.project(member);
     }
 
 
     @Override
     public MemberDTO getMember(int memberId) {
-        return findMemberByIdOrThrowNotFound(memberId).toDTO();
+        return MemberDTO.project(findMemberByIdOrThrowNotFound(memberId));
     }
 
     @Override
     public MemberWithDictionariesDTO getMemberWithDictionaries(int memberId, boolean includeOwnDict, boolean includeFavoriteDict) {
         Member member = findMemberByIdOrThrowNotFound(memberId);
-        return member.toDTO(includeOwnDict, includeFavoriteDict);
+        return MemberWithDictionariesDTO.project(member, includeOwnDict, includeFavoriteDict);
     }
 
     @Override
-    public void updateMember(int memberId, Requests.UpdateMember request) {
+    public void updateMember(int memberId, Requests.MemberInfo request) {
         try {
             Member member = memberRepository.getOne(memberId);
             member.setAge(request.getAge());
@@ -103,7 +103,7 @@ public class StandardMemberService implements MemberService {
     }
 
     @Override
-    public DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request) {
+    public DictionaryDTO createOwnDictionary(int ownerId, Requests.DictionaryInfo request) {
         Member owner = findMemberByIdOrThrowNotFound(ownerId);
         Dictionary ownDict = Dictionary.builder()
                                 .title(request.getTitle())
@@ -111,7 +111,7 @@ public class StandardMemberService implements MemberService {
                                 .type(Dictionary.Type.OWN).build();
         owner.addOwnDictionary(ownDict);
         ownDict = dictionaryRepository.save(ownDict);
-        return ownDict.toDTO();
+        return DictionaryDTO.project(ownDict);
     }
 
     @Override

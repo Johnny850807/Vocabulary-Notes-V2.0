@@ -8,8 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
-import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.Requests;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static tw.waterball.vocabnotes.services.dto.DictionaryDTO.project;
 
 @Sql(scripts = {"classpath:clear.sql", "classpath:stub.sql"})
 @ContextConfiguration(classes = VocabNotesApplication.class)
@@ -33,45 +34,46 @@ class StandardDictionaryServiceTest extends BaseSpringTest {
 
     @Test
     void modifyDictionary() {
-        DictionaryDTO dictionaryDTO = em.find(Dictionary.class, 1).toDTO();
+        DictionaryDTO dictionaryDTO = project(em.find(Dictionary.class, 1));
         dictionaryDTO.setTitle("modified-title");
 
         dictionaryService.modifyDictionary(1,
-                new Requests.ModifyDictionary(dictionaryDTO.getTitle(), null));
+                new Requests.DictionaryInfo(dictionaryDTO.getTitle(), null));
 
         commitAndRestartTransaction();
-        assertEquals(dictionaryDTO, em.find(Dictionary.class, 1).toDTO());
+        assertEquals(dictionaryDTO, project(em.find(Dictionary.class, 1)));
 
         dictionaryDTO.setDescription("modified-description");
         dictionaryService.modifyDictionary(1,
-                new Requests.ModifyDictionary(null, dictionaryDTO.getDescription()));
+                new Requests.DictionaryInfo(null, dictionaryDTO.getDescription()));
 
         commitAndRestartTransaction();
-        assertEquals(dictionaryDTO, em.find(Dictionary.class, 1).toDTO());
+        assertEquals(dictionaryDTO, project(em.find(Dictionary.class, 1)));
     }
 
     @Test
     void createPublicDictionary() {
         DictionaryDTO created = dictionaryService.createPublicDictionary(
-                new Requests.CreateDictionary("title", "descritpion"));
+                new Requests.DictionaryInfo("title", "descritpion"));
         commitAndRestartTransaction();
-        assertEquals(em.find(Dictionary.class, created.getId()).toDTO(), created);
+        assertEquals(project(em.find(Dictionary.class, created.getId())), created);
     }
 
     @Test
     void getDictionary() {
         DictionaryDTO dictionaryDTO = dictionaryService.getDictionary(1);
-        assertEquals(em.find(Dictionary.class, 1).toDTO(), dictionaryDTO);
+        assertEquals(project(em.find(Dictionary.class, 1)), dictionaryDTO);
     }
 
     @Test
     void getPublicDictionaries() {
         List<DictionaryDTO> dictionaries = dictionaryService.getPublicDictionaries();
-        DictionaryDTO expectedStub = em.find(Dictionary.class, 1).toDTO();
+        DictionaryDTO expectedStub = project(em.find(Dictionary.class, 1));
         assertEquals(1, dictionaries.size());
         assertEquals(expectedStub, dictionaries.get(0));
 
-        DictionaryDTO created = em.persistAndFlush(new Dictionary("t", "d", Dictionary.Type.PUBLIC)).toDTO();
+        DictionaryDTO created = project(em.persistAndFlush(
+                new Dictionary("t", "d", Dictionary.Type.PUBLIC)));
 
         commitAndRestartTransaction();
         dictionaries = dictionaryService.getPublicDictionaries();

@@ -14,24 +14,24 @@
  *    limitations under the License.
  */
 
-package tw.waterball.vocabnotes.api;
+package tw.waterball.vocabnotes.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
+
 /**
  * @author johnny850807@gmail.com (Waterball))
  */
-public final class Responses {
-    private Responses() { }
+@Data @AllArgsConstructor @NoArgsConstructor
+public class Credentials {
+    @Email
+    @Size(min = 1, max = 30)
+    private String email;
 
-    @Data @AllArgsConstructor @NoArgsConstructor
-    public static class TokenResponse {
-        private String token;
-        private long expired;
-        private int memberId;
-    }
-
-
+    @Size(min = 8, max = 20)
+    private String password;
 }

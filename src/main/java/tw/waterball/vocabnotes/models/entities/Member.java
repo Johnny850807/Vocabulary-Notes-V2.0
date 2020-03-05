@@ -16,7 +16,6 @@
 
 package tw.waterball.vocabnotes.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +23,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Range;
 import tw.waterball.vocabnotes.models.Level;
-import tw.waterball.vocabnotes.models.dto.MemberDTO;
-import tw.waterball.vocabnotes.models.dto.MemberWithDictionariesDTO;
+import tw.waterball.vocabnotes.services.dto.MemberDTO;
+import tw.waterball.vocabnotes.services.dto.MemberWithDictionariesDTO;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.*;
@@ -46,35 +45,15 @@ import static com.fasterxml.jackson.annotation.JsonProperty.*;
 @Entity
 public class Member implements IdEntity {
     private Integer id;
-
-    @Size(min = 1, max=18)
     private String firstName;
-
-    @Size(min = 1, max=18)
     private String lastName;
-
-    @Range(min = 1, max = 150)
     private int age;
-
-    @Email @Size(max=30)
     private String email;
-
-    @JsonProperty(access = Access.WRITE_ONLY)
-    @NotNull @NotBlank
     private String password;
-
     private int exp = 0;
     private int level = 1;
-
-    @NotNull
     private Role role;
-
-    @JsonProperty(access = Access.WRITE_ONLY)
-    @ToString.Exclude
     private transient List<Dictionary> ownDictionaries = new ArrayList<>();
-
-    @JsonProperty(access = Access.WRITE_ONLY)
-    @ToString.Exclude
     private transient Set<Dictionary> favoriteDictionaries = new HashSet<>();
 
     public enum Role {
@@ -126,20 +105,4 @@ public class Member implements IdEntity {
         dictionary.setOwner(null);
     }
 
-    public MemberDTO toDTO() {
-        return new MemberDTO(getId(), getFirstName(), getLastName(),
-                getAge(), getEmail(), getExp(), getLevel(), getRole());
-
-    }
-
-
-    public MemberWithDictionariesDTO toDTO(boolean includeOwnDictionaries, boolean includeFavDictionaries) {
-        return new MemberWithDictionariesDTO(getId(), getFirstName(), getLastName(),
-                getAge(), getEmail(), getExp(), getLevel(), getRole(),
-                includeOwnDictionaries ?
-                        ownDictionaries.stream().map(Dictionary::toDTO).collect(Collectors.toList()) : null,
-                includeFavDictionaries ?
-                        favoriteDictionaries.stream().map(Dictionary::toDTO).collect(Collectors.toSet()) : null);
-
-    }
 }

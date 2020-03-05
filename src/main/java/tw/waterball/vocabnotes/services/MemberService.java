@@ -16,11 +16,11 @@
 
 package tw.waterball.vocabnotes.services;
 
-import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.models.dto.Credentials;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.MemberDTO;
-import tw.waterball.vocabnotes.models.dto.MemberWithDictionariesDTO;
+import tw.waterball.vocabnotes.services.dto.Requests;
+import tw.waterball.vocabnotes.models.Credentials;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.MemberDTO;
+import tw.waterball.vocabnotes.services.dto.MemberWithDictionariesDTO;
 import tw.waterball.vocabnotes.services.exceptions.DuplicateEmailException;
 import tw.waterball.vocabnotes.services.exceptions.EmailNotFoundException;
 import tw.waterball.vocabnotes.services.exceptions.PasswordNotCorrectException;
@@ -44,7 +44,7 @@ public interface MemberService {
 
     MemberWithDictionariesDTO getMemberWithDictionaries(int memberId, boolean includeOwnDict, boolean includeFavoriteDict);
 
-    void updateMember(int memberId, Requests.UpdateMember request);
+    void updateMember(int memberId, Requests.MemberInfo request);
 
     void favoriteDictionary(int memberId, int dictionaryId);
 
@@ -62,7 +62,7 @@ public interface MemberService {
 
     List<DictionaryDTO> getOwnDictionaries(int memberId, Integer offset, Integer limit);
 
-    DictionaryDTO createOwnDictionary(int ownerId, Requests.CreateDictionary request);
+    DictionaryDTO createOwnDictionary(int ownerId, Requests.DictionaryInfo request);
 
     void referenceWordGroup(int memberId, int dictionaryId, int wordGroupId);
 

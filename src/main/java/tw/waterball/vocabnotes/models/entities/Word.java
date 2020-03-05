@@ -34,16 +34,8 @@ import java.util.List;
 @Entity
 public class Word implements IdEntity {
     private Integer id;
-
-    @NotNull
-    @Size(min = 1, max = 30)
     private String name;
-
-    @Size(max = 80)
     private String synonyms = "";
-
-    @NotNull
-    @UrlConstraint
     private String imageUrl;
 
     public Word(String name, String synonyms, String imageUrl) {

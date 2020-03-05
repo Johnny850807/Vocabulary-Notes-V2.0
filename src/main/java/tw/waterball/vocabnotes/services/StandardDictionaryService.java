@@ -18,9 +18,8 @@ package tw.waterball.vocabnotes.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tw.waterball.vocabnotes.api.Requests;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
-import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
+import tw.waterball.vocabnotes.services.dto.Requests;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
 import tw.waterball.vocabnotes.models.repositories.DictionaryRepository;
@@ -48,25 +47,29 @@ public class StandardDictionaryService implements DictionaryService {
     }
 
     @Override
-    public void modifyDictionary(int dictionaryId, Requests.ModifyDictionary request) {
+    public void modifyDictionary(int dictionaryId, Requests.DictionaryInfo request) {
         Dictionary dictionary = findDictionaryOrThrowNotFound(dictionaryId);
-        request.getTitle().ifPresent(dictionary::setTitle);
-        request.getDescription().ifPresent(dictionary::setDescription);
+        if (request.getTitle() != null) {
+            dictionary.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            dictionary.setDescription(request.getDescription());
+        }
         dictionaryRepository.save(dictionary);
     }
 
     @Override
-    public DictionaryDTO createPublicDictionary(Requests.CreateDictionary request) {
+    public DictionaryDTO createPublicDictionary(Requests.DictionaryInfo request) {
         Dictionary dict = dictionaryRepository.save(Dictionary.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .type(Dictionary.Type.PUBLIC).build());
-        return dict.toDTO();
+        return DictionaryDTO.project(dict);
     }
 
     @Override
     public DictionaryDTO getDictionary(int dictionaryId) {
-        return findDictionaryOrThrowNotFound(dictionaryId).toDTO();
+        return DictionaryDTO.project(findDictionaryOrThrowNotFound(dictionaryId));
     }
 
     @Override

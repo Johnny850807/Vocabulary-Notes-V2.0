@@ -16,7 +16,7 @@
 
 package tw.waterball.vocabnotes.models.repositories;
 
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
 
 import java.util.List;
 

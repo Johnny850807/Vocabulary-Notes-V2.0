@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import tw.waterball.vocabnotes.api.exceptions.BadRequestException;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.repositories.WordRepository;
+import tw.waterball.vocabnotes.services.dto.WordDTO;
 import tw.waterball.vocabnotes.services.exceptions.ResourceNotFoundException;
 import tw.waterball.vocabnotes.utils.RegexUtils;
 
@@ -46,7 +47,7 @@ public class StandardWordService implements WordService {
 
     @Override
     public void changeImageUrlOfWord(String wordName, String imageUrl) {
-        Word word = getWord(wordName);
+        Word word = findWordOrThrowNotFound(wordName);
         word.setImageUrl(imageUrl);
         if (!RegexUtils.isValidUrl(imageUrl)) {
             throw new BadRequestException("Invalid imageUrl: "+imageUrl);
@@ -65,7 +66,11 @@ public class StandardWordService implements WordService {
     }
 
     @Override
-    public Word getWord(String wordName) {
+    public WordDTO getWord(String wordName) {
+        return WordDTO.project(findWordOrThrowNotFound(wordName));
+    }
+
+    private Word findWordOrThrowNotFound(String wordName) {
         return wordRepository.findByName(wordName)
                 .orElseThrow(()-> new ResourceNotFoundException("word", wordName));
     }

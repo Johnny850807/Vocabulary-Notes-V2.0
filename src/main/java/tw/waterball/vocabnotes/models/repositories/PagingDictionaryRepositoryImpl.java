@@ -17,7 +17,7 @@
 package tw.waterball.vocabnotes.models.repositories;
 
 import org.springframework.stereotype.Repository;
-import tw.waterball.vocabnotes.models.dto.DictionaryDTO;
+import tw.waterball.vocabnotes.services.dto.DictionaryDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,7 +33,7 @@ public class PagingDictionaryRepositoryImpl implements PagingDictionaryRepositor
 
     @Override
     public List<DictionaryDTO> findPublicDictionaries(int offset, int limit) {
-        return em.createQuery("SELECT new tw.waterball.vocabnotes.models.dto.DictionaryDTO" +
+        return em.createQuery("SELECT new tw.waterball.vocabnotes.services.dto.DictionaryDTO" +
                 "(d.id, d.title, d.description, d.owner.id, d.type) FROM Dictionary d", DictionaryDTO.class)
                 .setFirstResult(offset)
                 .setMaxResults(limit).getResultList();
@@ -41,7 +41,7 @@ public class PagingDictionaryRepositoryImpl implements PagingDictionaryRepositor
 
     @Override
     public List<DictionaryDTO> findOwnDictionaries(int ownerId, int offset, int limit) {
-        return em.createQuery("SELECT new tw.waterball.vocabnotes.models.dto.DictionaryDTO" +
+        return em.createQuery("SELECT new tw.waterball.vocabnotes.services.dto.DictionaryDTO" +
                 "(d.id, d.title, d.description, d.owner.id, d.type) FROM Dictionary d JOIN d.owner m " +
                 "WHERE m.id = ?1", DictionaryDTO.class)
                 .setParameter(1, ownerId)

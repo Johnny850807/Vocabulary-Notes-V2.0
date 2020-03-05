@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import tw.waterball.vocabnotes.BaseSpringTest;
 import tw.waterball.vocabnotes.VocabNotesApplication;
-import tw.waterball.vocabnotes.models.dto.WordGroupDTO;
+import tw.waterball.vocabnotes.services.dto.WordGroupDTO;
 import tw.waterball.vocabnotes.models.entities.Dictionary;
 import tw.waterball.vocabnotes.models.entities.Word;
 import tw.waterball.vocabnotes.models.entities.WordGroup;
@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static tw.waterball.vocabnotes.services.dto.WordGroupDTO.project;
 
 @Sql(scripts = {"classpath:clear.sql", "classpath:stub.sql"})
 @ContextConfiguration(classes = VocabNotesApplication.class)
@@ -33,13 +34,13 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
 
     @Test
     void testGetWordGroup() {
-        WordGroupDTO expected = em.find(WordGroup.class, 1).toDTO();
+        WordGroupDTO expected = project(em.find(WordGroup.class, 1));
         assertEquals(expected, wordGroupService.getWordGroup(1));
     }
 
     @Test
     void testCreateWordGroup() {
-        WordGroupDTO created = em.persistAndFlush(new WordGroup()).toDTO();
+        WordGroupDTO created = project(em.persistAndFlush(new WordGroup()));
         commitAndRestartTransaction();
 
         assertEquals(created, wordGroupService.getWordGroup(created.getId()));
@@ -89,6 +90,6 @@ class StandardWordGroupServiceTest extends BaseSpringTest {
     @Test
     void testGetWordGroups() {
         List<WordGroupDTO> wordGroups = wordGroupService.getWordGroups(1);
-        assertEquals(em.find(WordGroup.class, 1).toDTO(), wordGroups.get(0));
+        assertEquals(project(em.find(WordGroup.class, 1)), wordGroups.get(0));
     }
 }
