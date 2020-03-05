@@ -53,7 +53,7 @@ public class JwtTokenService implements TokenService {
     }
 
     public JwtTokenService(String secret, Date expiration) {
-        key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes());
+        key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expiration = expiration;
     }
 
@@ -66,7 +66,7 @@ public class JwtTokenService implements TokenService {
     public JwtToken createToken(Params params) {
         Member.Role role = Member.Role.valueOf(params.getString(TokenClaim.ROLE));
         final int memberId = params.getInteger(TokenClaim.MEMBER_ID);
-        final Date expirationDate = new Date(System.currentTimeMillis() + DEFAULT_EXPIRATION.getTime());
+        final Date expirationDate = new Date((System.currentTimeMillis() + DEFAULT_EXPIRATION.getTime()));
         return new JwtTokenImpl(expirationDate, new TokenClaim(role, memberId));
     }
 
@@ -92,8 +92,8 @@ public class JwtTokenService implements TokenService {
 
     private String compact(Date expirationDate, TokenClaim tokenClaim) {
         return Jwts.builder()
-                .setExpiration(expirationDate)
                 .setClaims(tokenClaim.getClaimMap())
+                .setExpiration(expirationDate)
                 .signWith(key).compact();
     }
 

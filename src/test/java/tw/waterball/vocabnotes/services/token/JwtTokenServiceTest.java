@@ -12,7 +12,7 @@ import tw.waterball.vocabnotes.models.entities.Member;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JwtTokenServiceTest {
-    private final static String SECRET = "1234567890abcdefghijklmn";
+    private final static String SECRET = "1234567890abcdefghijklmnopqrstuvwxyz1234567890";
     private JwtTokenService jwtTokenService = new JwtTokenService(SECRET);
 
     @Test
@@ -22,6 +22,8 @@ class JwtTokenServiceTest {
         assertEquals(Member.Role.MEMBER, token.getClaim().getRole());
 
         JwtToken parsed = jwtTokenService.parse(token.toString());
-        assertEquals(token, parsed);
+        assertEquals(token.getExpirationTime().getTime() / 1000,
+                parsed.getExpirationTime().getTime() / 1000);
+        assertEquals(token.getClaim(), parsed.getClaim());
     }
 }
